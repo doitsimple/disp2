@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+
+var fs = require("fs");
+var mkdirp = require("mkdirp");
+var path = require("path");
+var core = require("./core");
+
+var libFile = require("./lib/file");
+
+var node = process.argv[0], //nodejs binary
+		dispCmd = process.argv[1], //this file
+		param1 = process.argv[2],
+		param2 = process.argv[3]; 
+
+var configFile, task;
+[param1, param2].forEach(function(param){
+	if(!param) return;
+	if(param.match("\.json")){
+		configFile = param;
+	}
+	else{
+		task = param;
+	}
+});
+if(!configFile)	configFile = "project.json";
+if(!task)	task = "main";
+
+if(!fs.existsSync(configFile)){
+	console.error(configFile + " is not existed");
+	process.exit(1);
+}
+var	config = libFile.readJSON(configFile);
+
+var dispRoot;
+if(process.env.dispRoot) dispRoot = path.resolve(process.env.dispRoot);
+else dispRoot = path.resolve(path.dirname(dispCmd) + "/..");
+config.root = dispRoot;
+
+core.extend(config);
+console.log(config);
+core.run(config, "main");
+
