@@ -1,0 +1,16 @@
+# DISP2
+
+Self-generated templating engine for any language.
+
+It's core function works like an advanced m4 language, but based on javascript.
+
+# directory structure
+
+ns: namespace, contains 
+backend
+ui
+
+# schema
+mongo/mysql
+userSchema: usernameField
+tokenSchema: tokenField

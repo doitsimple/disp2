@@ -36,7 +36,7 @@ if(process.env.dispRoot) dispRoot = path.resolve(process.env.dispRoot);
 else dispRoot = path.resolve(path.dirname(dispCmd) + "/..");
 config.root = dispRoot;
 
-core.extend(config);
-console.log(config);
-core.run(config, "main");
+core.set(config);
+fs.writeFileSync(".project.json", JSON.stringify(config, undefined, 2));
+core.run("main");
 
