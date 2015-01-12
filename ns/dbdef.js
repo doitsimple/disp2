@@ -251,6 +251,7 @@ function extendSchemas(env){
 				if(!f.media) f.media = "Image";
 				env.apis["upload" + nameStr] = {
 					"route": schema.name + "/" + f.name,
+					"text": "上传" + f.text,
 					"multipart": true,
 					"method": "post",
 					"params": [
@@ -264,7 +265,7 @@ function extendSchemas(env){
               "type": f.media
             }
 					],
-					"saveRes": "account",
+					"db": schema.name,
 					"auth": true
 				};
 			};
@@ -278,6 +279,8 @@ function extendApis(env){
 		var api = env.apis[key];
 		if(api.multipart)
 			env.hasMultipart = true;
+		if(api.isSignin)
+			env.signinApi = api;
 		if(!api.name) api.name = key;
 		if(!api.route) api.route = key;
 		if(!api.fields) api.fields = [];
