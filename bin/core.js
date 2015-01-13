@@ -28,9 +28,9 @@ function set(config){
 			libPaths: ["lib", config.root +　"/lib"],
 			nsPaths: ["ns", config.root +　"/ns"]
 		};
-	config.sys = {};
+	if(!config.sys) config.sys = {};
 	addDefaultParams(config.sys, defaultSys);	
-
+	config.sys.modPaths = [];
 	var defaultMakeTask = {
 		type: "make",
 		target: "."
@@ -58,20 +58,26 @@ function run(task){
 		process.exit(1);
 	}
 	if(taskConfig.type == "gen"){
-		var target = taskConfig.target;
-		libFile.mkdirpSync(target);
+		libFile.mkdirpSync(taskConfig.target);
 
-		if(taskConfig.ns){
-			makeFromNs(taskConfig);
-		}
+		getModPaths(taskConfig);
+		makeFromMods(taskConfig);
+		makeFromNs(taskConfig);
 		taskConfig.src.forEach(function(src){
-			walk(src, target, taskConfig.env);
+			walk(src, taskConfig.target, taskConfig.env);
 		});
+
 	}else if(taskConfig.type == "make"){
-		if(taskConfig.ns){
-			makeFromNs(taskConfig);
-		}
-		walk(taskConfig.target, null, taskConfig.env);
+		taskConfig.src = [];
+		taskConfig.src.push(taskConfig.target);
+
+		getModPaths(taskConfig);
+		makeFromMods(taskConfig);
+		makeFromNs(taskConfig);
+		taskConfig.src.forEach(function(src){
+			walk(src, taskConfig.target, taskConfig.env);
+		});
+		
 	}else if(taskConfig.type == "batch"){
 	}else{
 		console.error("task type" + taskConfig.type + " is not valid");
@@ -81,6 +87,7 @@ function run(task){
 
 function tmpl(str, data, filename){
 	str = str.toString();
+	data.local = data;
 	data.methods = methods;
 	var p=[];
 	var win, wout;
@@ -191,37 +198,67 @@ function intepretJSON(config){
 		}
 	});
 }
+function loadSubPath(nsSubPath, taskConfig){
+	console.log("load subpath: " + nsSubPath);
+	var config;
+	if(fs.existsSync(nsSubPath + "/config.json")){
+		config = libFile.readJSON(nsSubPath + "/config.json"); 
+		if(libObject.isArray(config.defaultArrayVars))
+			config.defaultArrayVars.forEach(function(k){
+				if(!taskConfig.env[k]) taskConfig.env[k] = [];
+			});
+		if(libObject.isArray(config.defaultHashVars))
+			config.defaultHashVars.forEach(function(k){
+				if(!taskConfig.env[k]) taskConfig.env[k] = {};
+			});
+		if(libObject.isArray(config.defaultVars))
+			config.defaultVars.forEach(function(k){
+				if(!taskConfig.env[k])
+					taskConfig.env[k] = false;
+			});
+	}
+	if(fs.existsSync(nsSubPath + "/loader.js")){
+		require(path.resolve(nsSubPath) + "/loader")(taskConfig.env);
+	}
+}
+function walkSubPath(nsSubPath, taskConfig){
+	var dirpath = nsSubPath  + "/src";
+	if(fs.existsSync(dirpath)){
+		console.log("src: " + path.resolve(dirpath));
+		walk(dirpath, taskConfig.target, taskConfig.env);
+	}
+}
+function getModPaths(taskConfig){	
+	if(!taskConfig.ns) return;
+	globalConfig.sys.nsPaths.forEach(function(nsPath){
+		globalConfig.sys.modPaths.push(nsPath);
+		var nsSubPath = nsPath + "/" + taskConfig.ns;
+		if(fs.existsSync(nsSubPath)){
+			globalConfig.sys.modPaths.push(nsSubPath);
+		}
+	});
+}
 function makeFromNs(taskConfig){	
+	if(!taskConfig.ns) return;
 	globalConfig.sys.nsPaths.forEach(function(nsPath){
 		var nsSubPath = nsPath + "/" + taskConfig.ns;
-		var config;
-		if(fs.existsSync(nsSubPath + "/config.json")){
-			config = libFile.readJSON(nsSubPath + "/config.json"); 
-			if(libObject.isArray(config.defaultArrayVars))
-				config.defaultArrayVars.forEach(function(k){
-					if(!taskConfig.env[k]) taskConfig.env[k] = [];
-				});
-			if(libObject.isArray(config.defaultHashVars))
-				config.defaultHashVars.forEach(function(k){
-					if(!taskConfig.env[k]) taskConfig.env[k] = {};
-				});
-			if(libObject.isArray(config.defaultVars))
-				config.defaultVars.forEach(function(k){
-					if(!taskConfig.env[k])
-						taskConfig.env[k] = false;
-				});
+		if(fs.existsSync(nsSubPath)){
+			taskConfig.src.push(nsSubPath + "/src");
+			loadSubPath(nsSubPath, taskConfig);
 		}
-		if(fs.existsSync(nsSubPath + "/loader.js")){
-			require(path.resolve(nsSubPath) + "/loader")(taskConfig.env);
-		}
-		var dirpath = nsSubPath  + "/src";
-		if(fs.existsSync(dirpath)){
-			console.log("src: " + path.resolve(dirpath));
-			walk(dirpath, taskConfig.target, taskConfig.env);
-		}
-
 	});
-
+}
+function makeFromMods(taskConfig){	
+	if(!taskConfig.mods) return;
+	for (var modname in taskConfig.mods){
+		globalConfig.sys.modPaths.forEach(function(modPath){
+			var modSubPath = modPath + "/" + modname;
+			if(fs.existsSync(modSubPath)){
+				taskConfig.src.push(modSubPath + "/src");
+				loadSubPath(modSubPath, taskConfig);
+			}
+		});
+	}
 }
 
 function fillDir(dir, tdir, dj, env){
@@ -234,8 +271,8 @@ function fillDir(dir, tdir, dj, env){
 	var configs;
 // the array can be store in key and/or config
 	if(dj.key){
-		if(!env[dj.key]) return;
-		if(!libObject.isArray(env[dj.key]))
+		if(!env[dj.key]) configs = [];
+		else if(!libObject.isArray(env[dj.key]))
 			configs = [env[dj.key]];
 		else
 			configs = env[dj.key];
@@ -295,6 +332,13 @@ function fillDir(dir, tdir, dj, env){
 			
 			for (var key in subenvs){
 				var subenv = subenvs[key];
+
+				if(!subenv){
+					console.log(dir + " not env");
+					continue;
+				}
+
+//select subenv that matchs select
 				var doloop = true;
 				if(config.select){
 					for(var key in config.select){
@@ -327,7 +371,7 @@ function fillDir(dir, tdir, dj, env){
 }
 function walk(dir, tdir, env){
 	if(!fs.existsSync(dir)){
-		console.log(dir + "is not exist");
+		console.log(dir + " is not exist");
 		return 0;
 	}
 
