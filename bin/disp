@@ -4,7 +4,7 @@ var fs = require("fs");
 var path = require("path");
 var core = require("./core");
 
-var libFile = require("./lib/file");
+var libFile = require("../lib/nodejs/file");
 
 var node = process.argv[0], //nodejs binary
 		dispCmd = process.argv[1], //this file
