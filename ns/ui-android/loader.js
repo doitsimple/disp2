@@ -1,6 +1,4 @@
 var dbdef = require("../dbdef");
-var core = require("../../dist/core");
-var ucfirst = core.methods.ucfirst;
 module.exports = function(env){
 	if(!env.schemas || !env.apis){
 		console.error("must have schemas and apis");
