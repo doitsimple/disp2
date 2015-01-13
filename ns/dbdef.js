@@ -289,6 +289,7 @@ function extendApis(env){
 	env.hasMultipart = false;
 	for(var key in env.apis){
 		var api = env.apis[key];
+		if(!api.type) api.type = false;
 		if(api.multipart)
 			env.hasMultipart = true;
 		if(api.isSignin)
@@ -304,13 +305,15 @@ function extendApis(env){
 		else
 			api.isSignupSendCode = false;
 
+		if(!api.db) api.db = false;
 		if(!api.fieldFromSchema) api.fieldFromSchema = false;
-		else{
+		else if(api.db){
 			api.fields = [];
 			env.schemas[api.db].fields.slice(1).forEach(function(f){
 				if(!f.auto) return api.fields.push(f);
 			});
 		}
+
 
 		if(!api.name) api.name = key;
 		if(!api.text) api.text = key;
