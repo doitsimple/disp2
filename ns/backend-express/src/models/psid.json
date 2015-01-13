@@ -1,0 +1,20 @@
+{
+		"config": [
+				{
+						"filename": "^^=name$$.js",
+						"envlink": "schemas",
+						"select": {
+								"engine": "mongo"
+						},
+						"tpl": "psid.mongo.js"
+				},
+				{
+						"filename": "^^=name$$.js",
+						"envlink": "schemas",
+						"select": {
+								"engine": "mysql"
+						},
+						"tpl": "psid.mysql.js"
+				}
+		]
+}

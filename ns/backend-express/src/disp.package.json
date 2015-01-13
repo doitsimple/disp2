@@ -1,0 +1,27 @@
+{
+  "name": "^^=global.name$$",
+  "main": "server.js",
+	"scripts": {
+			"start": "node server.js",
+			"test": "NODE_ENV=test sh scripts/test.sh"
+	},
+  "dependencies": {
+		^^for (dep in global.deps){$$
+		"^^=dep$$": "^^=global.deps[dep]$$",
+		^^}$$
+    "express": "^4.*",
+    "body-parser": "*",
+    "passport": "*",
+    "passport-bearer": "*",
+		"ursa": "*",
+    "bcrypt": "*",
+		"async": "*"
+  },
+	"devDependencies": {
+		^^for (dep in global.devDeps){$$
+    "^^=dep$$": "^^=global.devDeps[dep]$$",
+    ^^}$$
+		"mocha": "*",
+		"should": "*"
+	}
+}

@@ -280,14 +280,19 @@ function fillDir(dir, tdir, dj, env){
 				process.exit(1);
 			}
 			var	tplStr = fs.readFileSync(config.tpl);
-			var subenvs;
+			var subenvs = {};;
 			if(config.envs){
 				subenvs = config.envs;
-			}else if(config.envlink)
+			}else if(config.envlink){
 				subenvs = env[config.envlink];
-
+			}else if(config.envlinks){
+				for(var key in config.envlinks){
+					subenvs[key] = env[config.envlinks[key]];
+				}
+			}
 			if(config.envname)
 				env[config.envname] = {};
+			
 			for (var key in subenvs){
 				var subenv = subenvs[key];
 				var doloop = true;

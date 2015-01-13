@@ -1,0 +1,41 @@
+<dl>
+<dt>url</dt>
+<dd>/api/^^=route$$</dd>
+</dl>
+<div class="row">
+<div class="col-md-6">
+<form ng-submit="submit()">
+^^if(params.length){$$
+	<div>params</div>
+^^}$$
+^^params.forEach(function(field){$$
+  <div class="form-group">
+    <label for="^^=field.name$$">^^=field.text$$<small>^^=field.name$$</small></label>
+    <input type="text" class="form-control ^^if(field.required){$$required^^}$$" id="^^=field.name$$" name="^^=field.name$$" placeholder="^^=field.hint || field.text$$" ng-model="data.params.^^=field.name$$">
+  </div>
+^^})$$
+^^if(querys.length){$$
+	<div>querys</div>
+^^}$$
+^^querys.forEach(function(field){$$
+  <div class="form-group">
+    <label for="^^=field.name$$">^^=field.text$$<small>^^=field.name$$</small></label>
+    <input type="text" class="form-control ^^if(field.required){$$required^^}$$" id="^^=field.name$$" name="^^=field.name$$" placeholder="^^=field.hint || field.text$$" ng-model="data.querys.^^=field.name$$">
+  </div>
+^^})$$
+^^if(fields.length){$$
+	<div>fields</div>
+^^}$$
+^^fields.forEach(function(field){$$
+  <div class="form-group">
+    <label for="^^=field.name$$">^^=field.text$$<small>^^=field.name$$</small></label>
+    <input type="text" class="form-control ^^if(field.required){$$required^^}$$" id="^^=field.name$$" name="^^=field.name$$" placeholder="^^=field.hint || field.text$$" ng-model="data.fields.^^=field.name$$">
+  </div>
+^^})$$
+  <button type="submit" class="btn btn-primary btn-block">Submit</button>
+<form/>
+</div>
+<div class="col-md-6">
+<textarea style="width:100%;height:800px;" ng-model="result"></textarea>
+</div>
+</form>

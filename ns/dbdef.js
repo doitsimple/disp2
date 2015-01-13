@@ -233,19 +233,30 @@ function extendSchemas(env){
 		else schema.isUserSchema = false;
 		if(schema.isTokenSchema) env.tokenSchema = schema;
 		else schema.isTokenSchema = false;
+		if(schema.isCodeSchema) env.codeSchema = schema;
+		else schema.isCodeSchema = false;
+
 		schema.idField = schema.fields[0];
 
 		if(!schema.userIdField) schema.userIdField = false;
+		if(!schema.phoneField) schema.phoneField = false;
+		if(!schema.emailField) schema.emailField = false;
 		if(!schema.usernameField) schema.usernameField = false;
 		if(!schema.passwordField) schema.passwordField = false;
 		if(!schema.tokenField) schema.tokenField = false;
 		if(!schema.codeField) schema.codeField = false;
+		if(!schema.timeField) schema.timeField = false;
 
 		schema.fields.forEach(function(f){
 			if(f.isUserId) schema.userIdField = f;
+			if(f.isPhone) schema.phoneField = f;
+			if(f.isEmail) schema.emailField = f;
 			if(f.isPassword) schema.passwordField = f;
 			if(f.isUsername) schema.usernameField = f;
 			if(f.isToken)	schema.tokenField = f;
+			if(f.isCode)	schema.codeField = f;
+			if(f.isTime)	schema.timeField = f;
+/*
 			if(f.upload){
 				var nameStr = ucfirst(schema.name) + ucfirst(f.name); 
 				if(!f.media) f.media = "Image";
@@ -269,6 +280,7 @@ function extendSchemas(env){
 					"auth": true
 				};
 			};
+*/
 		});
 		
 	}
@@ -281,7 +293,27 @@ function extendApis(env){
 			env.hasMultipart = true;
 		if(api.isSignin)
 			env.signinApi = api;
+		else
+			api.isSignin = false;
+		if(api.isSignup)
+			env.signupApi = api;
+		else
+			api.isSignup = false;
+		if(api.isSignupSendCode)
+			env.signupSendCodeApi = api;
+		else
+			api.isSignupSendCode = false;
+
+		if(!api.fieldFromSchema) api.fieldFromSchema = false;
+		else{
+			api.fields = [];
+			env.schemas[api.db].fields.slice(1).forEach(function(f){
+				if(!f.auto) return api.fields.push(f);
+			});
+		}
+
 		if(!api.name) api.name = key;
+		if(!api.text) api.text = key;
 		if(!api.route) api.route = key;
 		if(!api.fields) api.fields = [];
 		if(!api.params) api.params = [];
@@ -292,7 +324,6 @@ function extendApis(env){
 		if(!api.saveRes) api.saveRes = false;
 		if(!api.saveAuth) api.saveAuth = false;
 		if(!api.auth) api.auth = false;
-		if(!api.fieldFromSchema) api.fieldFromSchema = false;
 		if(!api.multipart) api.multipart = false;
 		if(!api.withResult) api.withResult = false;
 	}

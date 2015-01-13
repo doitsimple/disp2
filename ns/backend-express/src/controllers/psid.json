@@ -1,0 +1,11 @@
+{
+		"config": [
+				{
+						"filename": "^^=name$$.js",
+						"envlinks": {
+								"code": "code"
+						},
+						"tpl": "psid.code.js"
+				}
+		]
+}

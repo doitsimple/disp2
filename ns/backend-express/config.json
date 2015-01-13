@@ -1,0 +1,10 @@
+{
+		"defaultHashVars": [
+				"deps",
+				"devDeps"
+		],
+		"defaultVars": [
+				"static",
+				"uploadPath"
+		]
+}

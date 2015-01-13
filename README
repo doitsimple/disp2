@@ -4,11 +4,18 @@ Self-generated templating engine for any language.
 
 It's core function works like an advanced m4 language, but based on javascript.
 
-# directory structure
+# directory config
+psid.json
+example: 
+configs: {
+	"envname":
+	"tpl":
+	"envlink":
+}
 
+# directory structure
 ns: namespace, contains 
-backend
-ui
+
 
 # schema
 mongo/mysql
