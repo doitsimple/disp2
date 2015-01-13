@@ -218,6 +218,7 @@ function loadSubPath(nsSubPath, taskConfig){
 			});
 	}
 	if(fs.existsSync(nsSubPath + "/loader.js")){
+		console.log("run loader");
 		require(path.resolve(nsSubPath) + "/loader")(taskConfig.env);
 	}
 }
@@ -249,6 +250,7 @@ function makeFromNs(taskConfig){
 	});
 }
 function makeFromMods(taskConfig){	
+
 	if(!taskConfig.mods) return;
 	for (var modname in taskConfig.mods){
 		globalConfig.sys.modPaths.forEach(function(modPath){

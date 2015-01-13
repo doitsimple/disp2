@@ -1,4 +1,5 @@
 package ^^=global.ns$$.^^=dir$$;
+import org.json.JSONObject;
 
 public class ExceptionCode {
 
@@ -18,20 +19,10 @@ public class ExceptionCode {
 	public int code = 255;
 	public Exception e;
 	public String message;
-	public int intResult;
-	public String strResult;
-	public Object res;
-	public static ExceptionCode withResult(int i){
-		ExceptionCode e = new ExceptionCode(0);
-		e.intResult = i;
-		return e;
-	}
-	public static ExceptionCode withResult(String str){
-		ExceptionCode e = new ExceptionCode(0);
-		e.strResult = str;
-		return e;
-	}
-	public static ExceptionCode withResult(Object res){
+
+	public JSONObject res;
+
+	public static ExceptionCode withResult(JSONObject res){
 		ExceptionCode e = new ExceptionCode(0);
 		e.res = res;
 		return e;
