@@ -305,10 +305,11 @@ function extendApis(env){
 		else
 			api.isSignupSendCode = false;
 
+		if(!api.fields) api.fields = [];
+
 		if(!api.db) api.db = false;
 		if(!api.fieldFromSchema) api.fieldFromSchema = false;
 		else if(api.db){
-			api.fields = [];
 			env.schemas[api.db].fields.slice(1).forEach(function(f){
 				if(!f.auto) return api.fields.push(f);
 			});
@@ -318,7 +319,6 @@ function extendApis(env){
 		if(!api.name) api.name = key;
 		if(!api.text) api.text = key;
 		if(!api.route) api.route = key;
-		if(!api.fields) api.fields = [];
 		if(!api.params) api.params = [];
 		if(!api.querys) api.querys = [];
 		if(!api.errorCode) api.errorCode = {};

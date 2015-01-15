@@ -55,9 +55,12 @@ var AutoIncModel = mongoose.model('^^=name$$_next', AutoIncSchema);
 
 	^^if(autoIncField){$$
 	if(!model.^^=autoIncField$$){
+		
 		AutoIncModel.findOne({}, function(err, nexti){
 			model.^^=autoIncField$$ = nexti.next;
-			callback(err);
+			AutoIncModel.findOneAndUpdate({}, {"$inc": {"next":1}}, function(err, nexti){
+        callback(err);
+      });
 		})
 	}else{
 		callback();
@@ -69,15 +72,6 @@ var AutoIncModel = mongoose.model('^^=name$$_next', AutoIncSchema);
 });
 ^^}$$
 
-^^if(autoIncField){$$
-^^=ucfirst(name)$$Schema.post('save', function(doc) {
-	AutoIncModel.findOneAndUpdate({}, {"$inc": {"next":1}}, function(err, nexti){
-		if(err){
-			console.log(err);
-		}
-	});
-});
-^^}$$
 
 ^^if(passwordField){$$
 ^^=ucfirst(name)$$Schema.methods.verifyPassword = function(password, cb) {
@@ -156,7 +150,7 @@ Model.method.post = function(doc, fn){
   var model = new Model(filter(doc));
   model.save(function(err, doc) {
     if (err)
-			fn(err);
+			fn(err, 1);
 		else{
 			fn(null, {insertId: doc.^^=idField.name$$});
 		}
@@ -184,7 +178,7 @@ Model.method.put = function(where, doc, fn){
 			if(err)
 				fn(err);
 			else
-				fn(null);
+				fn(null, ori_doc);
 		});
 	});
 }
@@ -286,11 +280,14 @@ Model.method.verifyId^^=ucfirst(f.name)$$ = function(id, password, cb) {
 ^^}})$$
 
 Model.method.posts = function(array, fn){
+	console.log("posts");
 	async.eachSeries(array, Model.method.post, function(err){
 		if(err) fn(err);
 		else fn(null, {success: true});
 	});
+
 }
+
 
 function filter(doc){
   var json = {};
