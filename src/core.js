@@ -293,7 +293,6 @@ function fillDir(dir, tdir, dj, env){
 		return;
 	}
 	configs.forEach(function(config){
-
 // files: copy hetero
 		if(libObject.isArray(config.files)){
 			libFile.mkdirpSync(tdir);
@@ -325,6 +324,8 @@ function fillDir(dir, tdir, dj, env){
 			}else if(config.envlink){
 				subenvs = env[config.envlink];
 			}else if(config.envlinks){
+	//if envlinks is object, select
+	// it is subenvs prototype
 				for(var key in config.envlinks){
 					subenvs[key] = env[config.envlinks[key]];
 				}
@@ -332,8 +333,8 @@ function fillDir(dir, tdir, dj, env){
 			if(config.envname)
 				env[config.envname] = {};
 			
-			for (var key in subenvs){
-				var subenv = subenvs[key];
+			for (var subkey in subenvs){
+				var subenv = subenvs[subkey];
 
 				if(!subenv){
 					console.log(dir + " not env");
@@ -351,14 +352,15 @@ function fillDir(dir, tdir, dj, env){
 				if(!doloop) continue;
 
 				subenv.global = env;
-				if(!subenv.name) subenv.name = key;
+				if(!subenv.name) subenv.name = subkey;
 				if(config.filename){
 					var filename = tmpl(config.filename, subenv);
 					console.log("file: " + tdir + "/" + filename);
 					libFile.mkdirpSync(path.dirname(tdir + "/" + filename));
 					fs.writeFileSync(tdir + "/" + filename, tmpl(tplStr, subenv));
 				}else if(config.envname){
-					env[config.envname][key] = tmpl(tplStr, subenv);
+					console.log("env: " + subkey);
+					env[config.envname][subkey] = tmpl(tplStr, subenv);
 				}
 			};
 			

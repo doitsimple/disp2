@@ -30,7 +30,11 @@ rootApp.controller('^^=name$$Controller', function($scope, $routeParams, request
 		route += "&^^=q.name$$=" + $scope.data.querys.^^=q.name$$;
  ^^}$$
 ^^})$$
+^^if(!multipart){$$
 		requestService.^^=method$$(route, ^^=auth$$, $scope.data.fields).then(function(result){
+^^}else{$$
+		requestService.postMultipart(route, ^^=auth$$, $scope.buffer).then(function(result){
+^^}$$
 			if(result.status == 401){
 				alert("登陆过期");
 				authService.signout();

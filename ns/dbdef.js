@@ -1,7 +1,6 @@
 var libString = require("../lib/js/string");
 var ucfirst = libString.ucfirst;
 
-
 var table = {};
 table.Boolean = table.bool = table.boolean = {
 	"name": "bool",
@@ -256,7 +255,7 @@ function extendSchemas(env){
 			if(f.isToken)	schema.tokenField = f;
 			if(f.isCode)	schema.codeField = f;
 			if(f.isTime)	schema.timeField = f;
-/*
+
 			if(f.upload){
 				var nameStr = ucfirst(schema.name) + ucfirst(f.name); 
 				if(!f.media) f.media = "Image";
@@ -270,17 +269,12 @@ function extendSchemas(env){
               "name": "_id"
             }
 					],
-					"fields": [
-            {
-              "name": f.name,
-              "type": f.media
-            }
-					],
+					"media": f.media,
 					"db": schema.name,
 					"auth": true
 				};
 			};
-*/
+
 		});
 		
 	}
@@ -314,8 +308,6 @@ function extendApis(env){
 				if(!f.auto) return api.fields.push(f);
 			});
 		}
-
-
 		if(!api.name) api.name = key;
 		if(!api.text) api.text = key;
 		if(!api.route) api.route = key;

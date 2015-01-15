@@ -1,6 +1,8 @@
 <dl>
 <dt>url</dt>
 <dd>/api/^^=route$$</dd>
+<dt>need token?</dt>
+<dd>^^=auth$$</dd>
 </dl>
 <div class="row">
 <div class="col-md-6">
@@ -10,7 +12,7 @@
 ^^}$$
 ^^params.forEach(function(field){$$
   <div class="form-group">
-    <label for="^^=field.name$$">^^=field.text$$<small>^^=field.name$$</small></label>
+    <label for="^^=field.name$$">^^=field.text$$&nbsp;<small>^^=field.name$$</small></label>
     <input type="text" class="form-control ^^if(field.required){$$required^^}$$" id="^^=field.name$$" name="^^=field.name$$" placeholder="^^=field.hint || field.text$$" ng-model="data.params.^^=field.name$$">
   </div>
 ^^})$$
@@ -19,19 +21,25 @@
 ^^}$$
 ^^querys.forEach(function(field){$$
   <div class="form-group">
-    <label for="^^=field.name$$">^^=field.text$$<small>^^=field.name$$</small></label>
+    <label for="^^=field.name$$">^^=field.text$$&nbsp;<small>^^=field.name$$</small></label>
     <input type="text" class="form-control ^^if(field.required){$$required^^}$$" id="^^=field.name$$" name="^^=field.name$$" placeholder="^^=field.hint || field.text$$" ng-model="data.querys.^^=field.name$$">
   </div>
 ^^})$$
 ^^if(fields.length){$$
 	<div>fields</div>
 ^^}$$
+^^if(!multipart){$$
 ^^fields.forEach(function(field){$$
   <div class="form-group">
-    <label for="^^=field.name$$">^^=field.text$$<small>^^=field.name$$</small></label>
+    <label for="^^=field.name$$">^^=field.text$$&nbsp;<small>^^=field.name$$</small></label>
     <input type="text" class="form-control ^^if(field.required){$$required^^}$$" id="^^=field.name$$" name="^^=field.name$$" placeholder="^^=field.hint || field.text$$" ng-model="data.fields.^^=field.name$$">
   </div>
 ^^})$$
+^^}else{$$
+  <div class="form-group">
+    <input type="file" class="form-control" file-model="buffer">
+  </div>
+^^}$$
   <button type="submit" class="btn btn-primary btn-block">Submit</button>
 <form/>
 </div>

@@ -35,5 +35,26 @@ rootApp.factory('requestService', function($http, authService){
 			});
 		};
 	});
+	methods.postMultipart = function(route, isAuth, file){
+		var formData=new FormData();
+		formData.append("buffer", file);
+		var url = route;
+		var config = {
+			url: url,
+			method: "POST",
+			data: formData,
+			headers: {
+				'Content-Type': undefined
+			},
+			transformRequest: angular.identity
+		};
+		if(isAuth)
+			config.headers.Authorization = "Bearer " + authService.getToken();
+		return $http(config).then(function(result){
+			return result;
+		}, function(err){
+			return err;
+		});
+	}
 	return methods;
 });
