@@ -270,7 +270,9 @@ function extendSchemas(env){
             }
 					],
 					"media": f.media,
+					"field": f.name,
 					"db": schema.name,
+					"saveRes": true,
 					"auth": true
 				};
 			};
