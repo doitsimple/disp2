@@ -1,0 +1,14 @@
+{
+		"config": [
+				{
+						"filename": "^^=name$$Utils.h",
+						"envlink": "schemas",
+						"tpl": "psid.h"
+				},
+				{
+						"filename": "^^=name$$Utils.m",
+						"envlink": "schemas",
+						"tpl": "psid.m"
+				}
+		]
+}
