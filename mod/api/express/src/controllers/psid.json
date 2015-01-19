@@ -1,0 +1,10 @@
+{
+    "config": {
+        "envname": "multipartApiContents",
+        "envlink": "apis",
+        "select": {
+            "multipart": true
+        },
+        "tpl": "psid.multipart.js"
+    }
+}

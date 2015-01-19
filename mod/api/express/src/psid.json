@@ -1,0 +1,6 @@
+{
+		"config": {
+				"envname": "nodeAppContents",
+				"tpl": "psid.app.js"
+		}
+}
