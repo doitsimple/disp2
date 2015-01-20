@@ -1,5 +1,4 @@
 ^^
-var signinAfterSignup = false;
 var ucfirst = methods.ucfirst;
 var usernameFieldName = global.userSchema.usernameField.name;
 var idFieldName = global.userSchema.idField.name;

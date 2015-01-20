@@ -4,6 +4,11 @@
 						"filename": "^^=name$$.js",
 						"envlink": "code",
 						"tpl": "psid.code.js"
+				},
+				{
+						"filename": "^^=name$$.js",
+						"envlink": "auth",
+						"tpl": "psid.auth.js"
 				}
 		]
 }
