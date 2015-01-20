@@ -3,7 +3,7 @@ var ucfirst = libString.ucfirst;
 
 
 function extendApis(env){
-	console.log(env.apis);
+//	console.log(env.apis);
 	env.hasMultipart = false;
 	if(!env.apis) env.apis = {};
 	for(var key in env.apis){

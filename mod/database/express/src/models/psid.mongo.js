@@ -90,15 +90,17 @@ var AutoIncModel = mongoose.model('^^=name$$_next', AutoIncSchema);
 var hat = require("../lib/random").hat;
 
 ^^=ucfirst(name)$$Schema.methods.getToken = function(cb) {
-	if(!this.^^=tokenField.name$$){
+//	if(!this.^^=tokenField.name$$){
 		var token = hat();	
 		this.^^=tokenField.name$$ = token;
 		this.save(function(){
 			cb(null, token);
 		});
+/*
 	}else{
 			cb(null, this.^^=tokenField.name$$);
 	}
+*/
 }
 ^^}$$
 

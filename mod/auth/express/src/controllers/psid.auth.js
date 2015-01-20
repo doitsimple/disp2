@@ -88,10 +88,11 @@ function signup(req, fn){
 		var pass = json.^^=passwordFieldName$$ = body.password;
 	  var model = new User(json);
 		model.save(function(err, doc) {
-    	if (err)
-				fn(err);
-			else{
-^^if(signinAfterSignup){$$
+    	if (err){
+				if(err.code == 11000) fn(err, null, 1);
+				else fn(err);
+			}else{
+^^if(local.signinAfterSignup){$$
 				auth(user, pass, function(err, user, message){
 					if(err) fn("signin after signup err");
 					else fn(null, user);
