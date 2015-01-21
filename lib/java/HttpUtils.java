@@ -26,8 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class HttpUtils {
-	public static int connectTimeout = 7000;
-	public static int readTimeout = 7000;
+	public static int connectTimeout = 21000;
+	public static int readTimeout = 21000;
 
 	public static HttpURLConnection createConnection(String urlString)
 		throws KeyManagementException, NoSuchAlgorithmException,
