@@ -1,6 +1,5 @@
 ^^var port = global.port;$$
 rootApp.factory('authService', function($http, $routeParams, $cookieStore, $location){
-  var currentUser = $cookieStore.get('user') || { username: ''};
 	function getUsername(){
 		var username;
     try{

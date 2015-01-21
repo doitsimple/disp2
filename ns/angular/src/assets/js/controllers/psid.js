@@ -40,7 +40,7 @@ rootApp.controller('^^=name$$Controller', function($scope, $routeParams, request
 				authService.signout();
 			}
 			else if(result.status == 200){
-^^if(saveAuth){$$
+^^if(isSignin){$$
 				authService.signin(result.data);
 ^^}$$
 				$scope.result = JSON.stringify(result.data, undefined, 2);

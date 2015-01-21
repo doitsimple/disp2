@@ -5,6 +5,10 @@
 <dd>^^=auth$$</dd>
 <dt>method</dt>
 <dd>^^=method$$</dd>
+^^for (var error in errorCode){$$
+<dt>errorCode ^^=error$$</dt>
+<dd>^^=errorCode[error]$$</dd>
+^^}$$
 </dl>
 <div class="row">
 <div class="col-md-6">

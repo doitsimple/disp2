@@ -271,7 +271,7 @@ Model.method.VerifyCode = function(params, fn){
 ^^}$$
 
 ^^fields.forEach(function(f){if(f.encrypt){$$
-Model.method.verifyId^^=ucfirst(f.name)$$ = function(id, password, cb) {
+Model.method.verify^^=ucfirst(f.name)$$ById = function(id, password, cb) {
 	Model.method.get(id, {"^^=f.name$$":1}, function(err, result){
 		libEncrypt.bcryptcompare(password, result.^^=f.name$$, function(err, isMatch) {
 			if (err) return cb(err);

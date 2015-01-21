@@ -79,7 +79,7 @@ function signup(req, fn){
 			return;
 		}
 		if(!valid){
-			fn("validation code error");
+			fn("validation code error", null, 2);
 			return;
 		}
 ^^}$$
@@ -117,17 +117,7 @@ function checkDuplicateUser(username, fn){
 			fn(null, !result);
 	});
 }
-^^global.userSchema.fields.forEach(function(f){$$
- ^^if(f.encrypt){$$
-function verify^^=ucfirst(f.name)$$(req, fn){
-	User.method.verify^^=ucfirst(f.name)$$ById(req.body.id, req.body.password, function(err, isMatch){
-		if(err) {fn(err); return; }
-		fn(null, {result: isMatch});
-	});
-}
-module.exports.verify^^=ucfirst(f.name)$$ = verify^^=ucfirst(f.name)$$;
- ^^}$$
-^^})$$
+
 module.exports.auth = auth;
 module.exports.signup = signup;
 module.exports.signin = signin;

@@ -32,7 +32,7 @@ function sendSms(req, fn){
 				"^^=schema.timeField.name$$": new Date()
 			});
 		}else if(new Date().getTime() - doc.^^=schema.timeField.name$$.getTime() < 60000){
-			fn("wait 60s to send next");
+			fn("wait 60s to send next", null, 1);
 			return;
 		}
 		doc.^^=schema.codeField.name$$ = code;
@@ -46,15 +46,15 @@ function sendSms(req, fn){
 ^^if(pseudo){$$
 			console.log("send to "+body.phone);
 			console.log(json);
-			fn(null, {"success": true, "code": code});
+			fn(null, {"code": code});
 ^^}else{$$
 			console.log(json);
 			webreq.postForm("^^=url$$", json, function(err, result){
 				if(err) fn(err);
 				else if(^^=success$$)
-					fn(null, {"success": true});
+					fn(null, {success: true});
 				else
-					fn(null, {"success": false, error: result});
+					fn("第三方短信发送接口返回错误", result, 2);
 			});
 ^^}$$
 		});
@@ -69,7 +69,7 @@ module.exports.sendSmsSignup = function(req, fn){
 			return;
 		}
 		if(doc){
-			fn("phone already exists", null, 1);
+			fn("phone already exists", null, 3);
 			return;
 		}
 		sendSms(req, fn);

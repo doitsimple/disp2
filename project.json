@@ -1,9 +1,0 @@
-{
-		"task": {
-				"main": {
-						"type": "gen",
-						"ns": "cmd-nodejs",
-						"env": "@@env.json"
-				}
-		}
-}
