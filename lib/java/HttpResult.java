@@ -14,7 +14,7 @@ public class HttpResult {
 	public String message;
 	public String value;
 	public JSONObject response;
-	public JSONArray responses;
+//	public JSONArray responses;
 
 	public HttpResult(String message) {
 		this.message = message;
@@ -33,7 +33,9 @@ public class HttpResult {
 				JSONObject jo = new JSONObject(str);
 				this.response = jo;
 			} else if (str.charAt(0) == '[') {
-				this.responses = new JSONArray(str);
+				JSONObject jo = new JSONObject();
+				jo.put("data", new JSONArray(str);
+				this.responses = jo;
 			}
 		}
 		urlConnection.disconnect();
