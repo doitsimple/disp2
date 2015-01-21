@@ -34,12 +34,12 @@ public class HttpResult {
 				this.response = jo;
 			} else if (str.charAt(0) == '[') {
 				JSONObject jo = new JSONObject();
-				jo.put("data", new JSONArray(str);
-				this.responses = jo;
+				jo.put("data", new JSONArray(str));
+				this.response = jo;
 			}
 		}
 		urlConnection.disconnect();
 	}
 
-}
+	}
 
