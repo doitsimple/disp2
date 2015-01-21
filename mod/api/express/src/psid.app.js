@@ -24,9 +24,9 @@ var router = express.Router();
  if(api.multipart){$$
 libFile.mkdirpSync(path.resolve(uploadPath + "/^^=api.route$$"));
 router.route('/^^=api.route$$/:id')
-      .post(^^=authStr$$multipart({uploadDir: path.resolve(uploadPath + "/^^api.route$$/")}), sendRes(common.^^=api.name$$));
+      .post(^^=authStr$$multipart({uploadDir: path.resolve(uploadPath + "/^^=api.route$$/")}), sendRes(common.^^=api.name$$));
 router.route('/^^=api.route$$/:filename')
-			.get(^^=authStr$$common.download^^=methods.ucfirst(api.name)$$);
+			.get(common.download^^=methods.ucfirst(api.name)$$);
  ^^}else{var paramsStr = "";
 	 api.params.forEach(function(p){
 		 paramsStr += ("/:" + p.name);
