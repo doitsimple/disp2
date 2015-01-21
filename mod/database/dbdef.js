@@ -268,11 +268,6 @@ function extendSchema(schema, key, env){
 				"text": "上传" + f.text,
 				"multipart": true,
 				"method": "post",
-				"params": [
-					{
-						"name": "_id"
-					}
-				],
 				"media": f.media,
 				"field": f.name,
 				"db": schema.name,

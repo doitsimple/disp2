@@ -1,8 +1,7 @@
 exports.^^=name$$ = function(req, fn){
 	console.log("UPLOAD");
-	console.log(req.params);
 	console.log(req.files);
-	var id = req.params.id;
+	var id = req.user._id;
 	if(!id){
 		fn("no id " + id);
     return;

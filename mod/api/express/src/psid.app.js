@@ -23,7 +23,7 @@ var router = express.Router();
 	 ctrlStr = "sendRes(" + api.customize + ")";
  if(api.multipart){$$
 libFile.mkdirpSync(path.resolve(uploadPath + "/^^=api.route$$"));
-router.route('/^^=api.route$$/:id')
+router.route('/^^=api.route$$')
       .post(^^=authStr$$multipart({uploadDir: path.resolve(uploadPath + "/^^=api.route$$/")}), sendRes(common.^^=api.name$$));
 router.route('/^^=api.route$$/:filename')
 			.get(common.download^^=methods.ucfirst(api.name)$$);
