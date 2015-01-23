@@ -1,5 +1,4 @@
 ^^if(global.hasMultipart){$$
-
 var multipart = require('connect-multiparty');
 var path = require("path");
 ^^}$$

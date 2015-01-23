@@ -41,14 +41,26 @@ function set(config){
 			modPaths: ["../mod", config.root + "/mod"]
 		};
 	if(!config.sys) config.sys = {};
-	addDefaultParams(config.sys, defaultSys);	
+	addParams(config.sys, defaultSys);	
 
 	mountJSON(config);
 	intepretJSON(config);
 	globalConfig = config;
 }
 function run(task){
-	var taskConfig = globalConfig.task[task];
+	var taskConfig;
+	if(task == "main")
+		taskConfig = globalConfig.task[task];
+	else{
+		if(!globalConfig.task[task]){
+			console.log("no task: " + task);
+			process.exit(0);
+		}
+		taskConfig = globalConfig.task["main"];
+		replaceParams(taskConfig, globalConfig.task[task]);
+		console.log(taskConfig);
+	}
+
 	if(!taskConfig.env) taskConfig.env = {};
 	if(!taskConfig){
 		console.error("task " + task + " is not exist");
@@ -110,7 +122,7 @@ function tmpl(str, data, filename){
 }
 
 
-function addDefaultParams(config, defaultConfig){
+function addParams(config, defaultConfig){
 	if(!config) {config = defaultConfig; return; }
 	libObject.iterate2(defaultConfig, config, function(key, itConfig, itConfig2){
 		if(!itConfig2.hasOwnProperty(key)){
@@ -134,6 +146,19 @@ function addDefaultParams(config, defaultConfig){
 				itConfig2[key].push(v);
 			});
 		}
+	});
+}
+function replaceParams(config, config2){
+	if(!config) {config = config2; return; }
+	libObject.iterate2(config2, config, function(key, itConfig, itConfig2){
+		itConfig2[key] = itConfig[key];
+	}, function(key, itConfig, itConfig2){
+		if(!libObject.isArray(itConfig2[key])){
+			itConfig2[key]= [];
+		}
+		itConfig[key].forEach(function(v){
+			itConfig2[key].push(v);
+		});
 	});
 }
 function mountJSON(config, dir){
@@ -431,41 +456,7 @@ function walk(dir, tdir, env){
 	});
 };
 
-/*
-function getModulePath(name, paths){
-	var modPath;
-	paths.forEach(function(path){
-		if(fs.existsSync(path + "/" +name))
-			modPath = path + "/" +name;
-	});
-	return modPath;
-}
-function loadMod(modName, mp){
-	console.log("loadMod: " + mp.name);
-	var loaderType, name;
-	//TODO example for loaderType 
-	if(mp.loader){
-		loaderType = mp.loader;
-	}
-	else{
-		loaderType = "_default";
-	}
-	var modPath = getPath(mp.tpl, modPaths);;
-	if(!modPath){
-		console.error("no modPath "+ mp.name);
-		console.error(modPaths);
-		process.exit(1);
-	}
-		
-	var config = readJSONUnsafe(modPath + "/config.json");
-	if(config.deps){
-//TODO
-	}
 
-	loader[loaderType](modPath, mp, env, config);
-	mp.extended = true;
-}
-*/
 module.exports.methods = methods;
 module.exports.set = set;
 module.exports.run = run;

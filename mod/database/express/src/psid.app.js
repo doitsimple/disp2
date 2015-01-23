@@ -1,5 +1,6 @@
 require('./db');
 ^^if(global.uploadPath){$$
-var uploadPath = "^^=global.uploadPath$$";
+var libFile=require("./lib/file");
+var uploadPath = __dirname + "/^^=global.uploadPath$$";
 ^^}$$
 

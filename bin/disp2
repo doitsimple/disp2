@@ -36,6 +36,12 @@ if(!config || !config.task || !config.task.main){
 		}
 	};
 }
+if(fs.existsSync("./product.json")){
+	config.task.product = libFile.readJSON("./product.json");
+	if(config.task.product){
+		if(!config.task.product.target) config.task.product.target = "product";
+	}
+}
 var dispRoot;
 if(process.env.dispRoot) dispRoot = path.resolve(process.env.dispRoot);
 else dispRoot = path.resolve(path.dirname(dispCmd) + "/..");
@@ -43,5 +49,5 @@ config.root = dispRoot;
 
 core.set(config);
 fs.writeFileSync(".project.json", JSON.stringify(config, undefined, 2));
-core.run("main");
+core.run(task);
 

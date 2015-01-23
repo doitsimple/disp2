@@ -1,0 +1,6 @@
+{
+		"config": {
+				"envname": "nodeServerContents",
+				"tpl": "psid.server.js"
+		}
+}

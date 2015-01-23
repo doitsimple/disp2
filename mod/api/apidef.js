@@ -9,8 +9,9 @@ function extendApis(env){
 	for(var key in env.apis){
 		var api = env.apis[key];
 		if(!api.type) api.type = false;
-		if(api.multipart)
+		if(api.multipart){
 			env.hasMultipart = true;
+		}
 		if(api.isSignin)
 			env.signinApi = api;
 		else

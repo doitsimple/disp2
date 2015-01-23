@@ -1,12 +1,12 @@
 var libDate = require("./lib/date");
-^^if(global.mongo){
+^^if(global.hasMongo){
  var mongo = global.mongo;
  $$
 var mongoose = require("mongoose");
 mongoose.connect('mongodb://^^=mongo.host$$:^^=mongo.port$$/^^=mongo.db$$');
 ^^}$$
 
-^^if(global.mysql){var mysql = global.mysql;$$
+^^if(global.hasMysql){var mysql = global.mysql;$$
 var mysql = require("mysql");
 var FFI = require("ffi");
 var libc = new FFI.Library(null, {
