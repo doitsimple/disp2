@@ -269,10 +269,9 @@ function extendSchema(schema, key, env){
 				"multipart": true,
 				"method": "post",
 				"media": f.media,
-				"field": f.name,
-				"db": schema.name,
-				"saveRes": true,
-				"auth": true
+				"auth": true,
+				"field": f.name, 
+				"db": schema.name
 			};
 		};
 	});

@@ -10,23 +10,47 @@ libObject.extend1(methods, libObject);
 
 var libFile = require("../lib/nodejs/file");
 var globalConfig;
-
-
-// two dim array is not allowed in config
+var cache = {};
+var nsCache = {};
+var tmplCache = {};
+var rtn = {files: {}, envs: {}};
+/* 
+!!! two dim array is not allowed in config
+priority 
+ min 1
+ ns <100
+ init 100
+ default 500
+ mod >500
+ max 1000
+ 
+*/
 function set(config){
 	if(!config || !config.task || !config.task.main ){
 		console.log("config error");
 		process.exit(1);
 	}
-
+//add default main task
 	var mainTaskConfig = config.task.main;
 	if(mainTaskConfig.ns){
+		if(!mainTaskConfig.load || !mainTaskConfig.load.length){
+			if(fs.existsSync("./load.js"))
+				mainTaskConfig.load = [{path: "./load.js", priority: 1}];
+			else
+				mainTaskConfig.load = [];
+		}
 		if(!mainTaskConfig.src || mainTaskConfig.src.length)
-			mainTaskConfig.src = ["."];
+			mainTaskConfig.src = [{path: ".", priority: 1000}];
+			
 		if(!mainTaskConfig.target)
 			mainTaskConfig.target = ".";
+	}else{
+		mainTaskConfig.ns = ["root"];
 	}
-
+	if(typeof mainTaskConfig.ns == "string"){
+		mainTaskConfig.ns = [mainTaskConfig.ns];
+	}
+//add default sys config
 	var defaultSys;
 	if( path.resolve(config.root) == path.resolve("."))
 		defaultSys = {
@@ -43,15 +67,20 @@ function set(config){
 	if(!config.sys) config.sys = {};
 	addParams(config.sys, defaultSys);	
 
+// process @@ means json path
 	mountJSON(config);
+// process ## means lib path
 	intepretJSON(config);
+// set
 	globalConfig = config;
 }
 function run(task){
 	var taskConfig;
+// get task config
 	if(task == "main")
 		taskConfig = globalConfig.task[task];
 	else{
+// if not main, append to main
 		if(!globalConfig.task[task]){
 			console.log("no task: " + task);
 			process.exit(0);
@@ -60,24 +89,61 @@ function run(task){
 		replaceParams(taskConfig, globalConfig.task[task]);
 		console.log(taskConfig);
 	}
-
-	if(!taskConfig.env) taskConfig.env = {};
 	if(!taskConfig){
 		console.error("task " + task + " is not exist");
 		process.exit(1);
 	}
+
+// prepare
+	if(!taskConfig.env) taskConfig.env = {};
 	libFile.mkdirpSync(taskConfig.target);
+
+
+	readDeps(taskConfig);
+// read priorities and find all available path
+	readPriorities(taskConfig);
+
 	console.log("\nload configs ...");
-	makeFromNs(taskConfig);
-	makeFromMods(taskConfig);
-	console.log("\ngenerate files ...");
-	taskConfig.src.forEach(function(src){
-		walk(src, taskConfig.target, taskConfig.env);
+
+	taskConfig.load.sort(function(a,b){
+		if(a.priority == b.priority) return a.path.localeCompare(b.path);
+		return a.priority - b.priority;
+	}).forEach(function(loadConfig){
+		console.log(loadConfig.path + " " + loadConfig.priority);
+		loadSubPath(loadConfig, taskConfig);
 	});
+
+//	makeFromNs(taskConfig);
+//	readConfigFromMods(taskConfig);
+//	makeFromMods(taskConfig);
+	console.log("\ngenerate files ...");
+	taskConfig.src.sort(function(a,b){
+		if(a.priority == b.priority) return a.path.localeCompare(b.path);
+		return a.priority - b.priority;
+	}).forEach(function(srcConfig){
+		console.log(srcConfig.path + " " + srcConfig.priority);
+		walk(srcConfig.path, taskConfig.target, taskConfig.env);
+	});
+	return rtn;
 }
 
-function tmpl(str, data, filename){
-	str = str.toString();
+function tmpl(config, data){
+	var str;
+	if(!config.key){
+		if(config.str) str = config.str.toString();
+		else str = config.toString();
+	}else{
+		if(tmplCache[config.key])
+			str = tmplCache[config.key];
+		else{
+			if(!config.str)
+				str = fs.readFileSync(config.key).toString();
+			else 
+				str = config.str.toString();
+			tmplCache[config.key] = str;
+		}
+	}
+
 	data.local = data;
 	data.methods = methods;
 	var p=[];
@@ -85,12 +151,12 @@ function tmpl(str, data, filename){
 	var evalstr = "p.push('";
 	with(data){
 		str = str.replace(/\r/g,"");
-//		str = str.
-//			replace(/\s*(\^\^[^=]((?!\$\$).)*\$\$)\s*/g, "$1");
+		//		str = str.
+		//			replace(/\s*(\^\^[^=]((?!\$\$).)*\$\$)\s*/g, "$1");
 		//replace multiple line [\s but not \n]* [^^] [not =] [not $$]* [$$] [\s*\n] 
 
 		str.split("\^\^").forEach(function(sub, i){
-		if(i==0){
+			if(i==0){
 				win = "";
 				wout = sub || "";
 			}else{
@@ -114,8 +180,12 @@ function tmpl(str, data, filename){
 			}			
 		});
 		evalstr+="');";
-
-		eval(evalstr);
+		try{
+			eval(evalstr);
+		}catch(e){
+			console.log(config);
+			eval(evalstr);
+		}
 
 		return p.join('');
 	}
@@ -202,78 +272,109 @@ function intepretJSON(config){
 		}
 	});
 }
-function loadSubPath(nsSubPath, taskConfig, modConfig){
-	var config, rtnConfig;
-	
-	if(fs.existsSync(nsSubPath + "/config.json")){
-		console.log("\tget: " + nsSubPath + "/config.json");
-		config = libFile.readJSON(nsSubPath + "/config.json"); 
-	}else{
-		config = {};
-	}
-
-	libObject.each(config.dep, function(dep){
-		makeFromNs(taskConfig, dep);
-	});
-
-	if(fs.existsSync(nsSubPath + "/loader.js")){
-		console.log("\tget: " + nsSubPath + "/loader.js");
-		rtnConfig = require(path.resolve(nsSubPath) + "/loader")(taskConfig.env, modConfig);
-	}
-	if(!rtnConfig) rtnConfig = {};
-	if(!rtnConfig.src){
-		if(fs.existsSync(nsSubPath + "/src"))
-			taskConfig.src.push(nsSubPath + "/src");
-	}else{
-		libObject.each(rtnConfig.src, function(src){
-			if(fs.existsSync(nsSubPath + "/" + src))
-				taskConfig.src.push(nsSubPath + "/" + src);
-		});
-	}
-}
-
-function makeFromNs(taskConfig, ns){	
-
-	if(!ns) ns = taskConfig.ns;
-	if(!ns) return;
-
-	globalConfig.sys.nsPaths.forEach(function(nsPath){
+function readNsDeps(ns, taskConfig){
+	if(nsCache[ns]) return;
+	nsCache[ns] = true;
+  globalConfig.sys.nsPaths.forEach(function(nsPath){
 		var nsSubPath = nsPath + "/" + ns;
 		if(fs.existsSync(nsSubPath)){
-			loadSubPath(nsSubPath, taskConfig);
-		}
-	});
-}
-function makeFromMods(taskConfig){	
-	if(!taskConfig.mod) return;
-	globalConfig.sys.modPaths.forEach(function(modPath){
-		for (var mod in taskConfig.mod){
-			var modConfig  = taskConfig.mod[mod];
-
-			var modSubPath = modPath + "/" + mod;
-			if(fs.existsSync(modPath)){
-				loadSubPath(modSubPath, taskConfig, modConfig);
-				if(!taskConfig.ns) return;
-				var modnsSubPath = modSubPath + "/" + taskConfig.ns;
-				if(fs.existsSync(modnsSubPath)){
-					loadSubPath(modnsSubPath, taskConfig, modConfig);
-				}
-
+			var config = readConfig(nsSubPath);
+			console.log(config);
+			if(config.dep){
+				libObject.each(config.dep, function(dep){
+					readNsDeps(dep, taskConfig);
+				});
 			}
 		}
 	});
 }
+function readDeps(taskConfig){
+	if(taskConfig.ns){
+		taskConfig.ns.forEach(function(ns){
+    	readNsDeps(ns, taskConfig);
+		});
+	}
+	if(taskConfig.mod){
+    for (var mod in taskConfig.mod){
+			globalConfig.sys.modPaths.forEach(function(modPath){
+        var modSubPath = modPath + "/" + mod;
+        var parentConfig = readConfig(modSubPath, taskConfig.mod[mod]);
+				for(var ns in nsCache){
+					var modnsSubPath = modSubPath + "/" + ns;
+					var config = readConfig(modnsSubPath, taskConfig.mod[mod]);
+					if(!config.loadPriority)
+						config.loadPriority = parentConfig.loadPriority + 0.1;
+					if(!config.srcPriority)
+						config.srcPriority = parentConfig.srcPriority + 0.1;
+				};
+      });
+    }
+  }
+}
+function readConfig(nsSubPath, modConfig){
+	nsSubPath = path.resolve(nsSubPath);
+	if(cache.hasOwnProperty(nsSubPath)) return null;
+	var config = {};
+  if(fs.existsSync(nsSubPath + "/config.json")){
+    console.log("\tget: " + nsSubPath + "/config.json");
+    config = libFile.readJSON(nsSubPath + "/config.json") || {};
+  }
+	if(modConfig){
+		if(!config) config = {};
+		for (var key in modConfig){
+			config[key] = modConfig[key];
+		}
+	}
+	cache[nsSubPath] = config;
+	return config;
+}
+
+function readPriorities(taskConfig){
+	for (var nsSubPath in cache){
+		var config = cache[nsSubPath];
+		if(!config) continue;
+		if(fs.existsSync(nsSubPath + "/init.js"))
+			taskConfig.load.push({
+				priority: config.initPriority || 100, 
+				path: nsSubPath + "/init.js",
+				config: config
+			});
+
+		if(fs.existsSync(nsSubPath + "/load.js"))
+			taskConfig.load.push({
+				priority: config.loadPriority || 500, 
+				path: nsSubPath + "/load.js",
+				config: config
+			});
+		else if(fs.existsSync(nsSubPath + "/loader.js"))
+			taskConfig.load.push({
+				priority: config.loadPriority || 500, 
+				path: nsSubPath + "/loader.js",
+				config: config
+			});
+		if(fs.existsSync(nsSubPath + "/src"))
+			taskConfig.src.push({
+				priority: config.srcPriority || 500, 
+				path: nsSubPath + "/src"
+			});
+	}
+}
+
+
+function loadSubPath(loadConfig, taskConfig){
+	require(loadConfig.path)(taskConfig.env, loadConfig.config);
+}
 
 
 function fillDir(dir, tdir, dj, env){
-//		console.log("filldir " +dir);
+	//		console.log("filldir " +dir);
 	if(!dj.key && !dj.config){
 		console.error(dir + "/psid.json has no key or config");
 		process.exit(1);
 	}
 
 	var configs;
-// the array can be store in key and/or config
+	// the array can be store in key and/or config
 	if(dj.key){
 		if(!env[dj.key]) configs = [];
 		else if(!libObject.isArray(env[dj.key]))
@@ -286,36 +387,34 @@ function fillDir(dir, tdir, dj, env){
 	if(dj.config)
 		if(!libObject.isArray(dj.config))
 			configs.push(dj.config);
-		else
-			dj.config.forEach(function(c){
-				configs.push(c);
-			});
+	else
+		dj.config.forEach(function(c){
+			configs.push(c);
+		});
 	if(!configs.length){
 		console.log("!!!"+dir + "/psid.json not works");
 		return;
 	}
 	configs.forEach(function(config, configi){
-// files: copy hetero
+		// files: copy hetero
 		if(libObject.isArray(config.files)){
 			libFile.mkdirpSync(tdir);
 			if(config.parse)
 				config.files.forEach(function(f){
 					var t = tdir + "/" + path.basename(f);
-					console.log("\tfile: " + f);
-					console.log("\t====> " + t);
-					fs.writeFileSync(t, tmpl(fs.readFileSync(f), {global: env, dir: path.basename(tdir)}));
+					rtn.files[path.relative(".", t)] = {src: path.resolve(f)};
+					fs.writeFileSync(t, tmpl({key: f}, {global: env, dir: path.basename(tdir)}));
 				});
 			else
 				config.files.forEach(function(f){
 					var t = tdir + "/" + path.basename(f);
 					if(f != t){
-						console.log("\tfile: " + f);
-						console.log("\t====> " + t);
+						rtn.files[path.relative(".", t)] = {src: path.resolve(f)};
 						libFile.copySync(f, t);
 					}
 				});				
 		}
-// copy homo
+		// copy homo
 		else{
 
 			if(!config.tpl) config.tpl = dir + "/psid.tpl";
@@ -325,7 +424,6 @@ function fillDir(dir, tdir, dj, env){
 				process.exit(1);
 			}
 
-			var	tplStr = fs.readFileSync(config.tpl);
 
 
 			var subenvs;
@@ -341,7 +439,7 @@ function fillDir(dir, tdir, dj, env){
 				console.log("!!!"+dir + "/psid.json config " + configi + " not works");
 				return;
 			}
-				
+			
 			if(libObject.isArray(subenvs)){
 				console.log("the config for psid should not be array");
 				process.exit(1);
@@ -351,7 +449,7 @@ function fillDir(dir, tdir, dj, env){
 			for (var subkey in subenvs){
 				var subenv = subenvs[subkey];
 
-//select subenv that matchs select
+				//select subenv that matchs select
 				var doloop = true;
 				if(config.select){
 					for(var key in config.select){
@@ -364,29 +462,26 @@ function fillDir(dir, tdir, dj, env){
 				subenv.global = env;
 				if(!subenv.name) subenv.name = subkey;
 				if(config.filename){
-					var filename = tmpl(config.filename, subenv);
+					var filename = tmpl({str: config.filename}, subenv);
 					var t = tdir + "/" + filename;
-					console.log("\tfile: " + config.tpl);
-					console.log("\t====> " + t);
+					rtn.files[path.relative(".", t)] = {tpl: path.resolve(config.tpl)};
 					libFile.mkdirpSync(path.dirname(t));
-					fs.writeFileSync(t, tmpl(tplStr, subenv));
+					fs.writeFileSync(t, tmpl({key: config.tpl}, subenv));
 				}else if(config.envname){
-					console.log("\tfile: " + config.tpl);
-					console.log("\t====> " + subenv.name);
-
-					if(config.envname && !env[config.envname])
-						env[config.envname] = {};
-					env[config.envname][subenv.name] = tmpl(tplStr, subenv);
+					if(!rtn.envs[config.envname]) rtn.envs[config.envname] = {};
+					rtn.envs[config.envname][subenv.name] = {tpl: path.resolve(config.tpl)};
+					if(!env[config.envname]) env[config.envname] = {};
+					env[config.envname][subenv.name] = tmpl({key: config.tpl}, subenv);
 
 				}
 			};
 			
 		}
-/*else{
-			console.error("unknown config for disp.json", JSON.stringify(config, undefined, 2));
-			process.exit(1);
-		}
-*/
+		/*else{
+		 console.error("unknown config for disp.json", JSON.stringify(config, undefined, 2));
+		 process.exit(1);
+		 }
+		 */
 	});
 	
 }
@@ -407,13 +502,13 @@ function walk(dir, tdir, env){
 				return 0;
 		}
 		if(dj.mv)
-			tdir = path.dirname(tdir) + "/" + tmpl(dj.mv, {global: env});
-	
+			tdir = path.dirname(tdir) + "/" + tmpl({str: dj.mv}, {global: env});
+		
 		fillDir(dir, tdir, dj, env);
 
 	}
 
-// then iterate file
+	// then iterate file
 	var files = fs.readdirSync(dir);
 	files.forEach(function(f){
 		if(f == "." || f.match(/~/) || f[0] == '#' 
@@ -425,31 +520,28 @@ function walk(dir, tdir, env){
 		}
 		var p = dir + '/' + f;
 		var t;
-// support disp. in directory name
+		// support disp. in directory name
 		var	stat = fs.statSync(p);
 		if(stat.isDirectory()){
 			walk(p, tdir + "/" + f, env);
 			return 0;
 		}
-// if begin with disp, format the file
+		// if begin with disp, format the file
 		if(f.match(/^disp\./)){
-			console.log("\tfile: " + p);
-			t = tdir + '/' + f.replace(/^disp./, "");				
-			console.log("\t====> " + t);
+			t = tdir + '/' + f.replace(/^disp./, "");	
+			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
-			fs.writeFileSync(t, tmpl(fs.readFileSync(p).toString(), {global: env}));
+			fs.writeFileSync(t, tmpl({key: p}, {global: env}));
 		}
 		else if(f.match(/\.disp$/)){
-			console.log("\tfile: " + p);
 			t = tdir + '/' + f.replace(/\.disp$/, "");
-			console.log("\t====> " + t);
+			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
-			fs.writeFileSync(t, tmpl(fs.readFileSync(p).toString(), {global: env}));
+			fs.writeFileSync(t, tmpl({key: p}, {global: env}));
 		}
 		else if(dir != tdir){
-			console.log("\tfile: " + p);
 			t = tdir + '/' + f;
-			console.log("\t===> " + t);
+			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			libFile.copySync(p, t);
 		}

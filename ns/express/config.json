@@ -1,3 +1,5 @@
 {
-		"dep": "nodejs"
+		"dep": "nodejs",
+		"loadPriority": 51,
+		"srcPriority": 899
 }

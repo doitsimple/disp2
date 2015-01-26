@@ -1,6 +1,9 @@
 // Load required packages
 var express = require('express');
 var bodyParser = require('body-parser');
+^^for(var key in global.nodeControllerFiles){$$
+var ^^=methods.ucfirst(key)$$ = require("./controllers/^^=key$$");
+^^}$$
 
 
 
