@@ -3,7 +3,8 @@
         "envname": "multipartApiContents",
         "envlink": "apis",
         "select": {
-            "multipart": true
+            "multipart": true,
+						"controller": null
         },
         "tpl": "psid.multipart.js"
     }

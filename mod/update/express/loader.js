@@ -3,7 +3,7 @@ module.exports = function(env, config){
 	if(!config) return;
 	if(config.frontend){
 		env.apis.checkUpdate.controller = "Update.checkUpdate";
-		env.apis.downloadUpdate.controller = "Update.downloadUpdate";
+		env.apis.downloadLatest.controller = "Update.downloadLatest";
 	}
 	if(config.backend){
 		env.apis.uploadUpdateFile.controller = "Update.uploadUpdateFile";

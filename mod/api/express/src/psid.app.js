@@ -20,19 +20,24 @@ var router = express.Router();
 	 ctrlStr = "sendRes("+ api.controller + ")";
  if(api.customize)
 	 ctrlStr = "sendRes(" + api.customize + ")";
- if(api.multipart){$$
+ var midwareStr = "";$$
+
+ ^^if(api.multipart){
+	 midwareStr = "multipart({uploadDir: path.resolve(uploadPath + '/"+api.route + "/')}), ";
+	 $$
 libFile.mkdirpSync(path.resolve(uploadPath + "/^^=api.route$$"));
-router.route('/^^=api.route$$')
-      .post(^^=authStr$$multipart({uploadDir: path.resolve(uploadPath + "/^^=api.route$$/")}), sendRes(common.^^=api.name$$));
+  ^^if(!api.controller){$$
 router.route('/^^=api.route$$/:filename')
 			.get(common.download^^=methods.ucfirst(api.name)$$);
- ^^}else{var paramsStr = "";
-	 api.params.forEach(function(p){
-		 paramsStr += ("/:" + p.name);
-	 });$$
-router.route('/^^=api.route$$^^=paramsStr$$')
-      .^^=api.method$$(^^=authStr$$^^=ctrlStr$$);
+  ^^}$$
  ^^}$$
+
+ ^^var paramsStr = "";
+ api.params.forEach(function(p){
+	 paramsStr += ("/:" + p.name);
+ });$$
+router.route('/^^=api.route$$^^=paramsStr$$')
+      .^^=api.method$$(^^=authStr$$^^=midwareStr$$^^=ctrlStr$$);
 ^^}$$
 
 

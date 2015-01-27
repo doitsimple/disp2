@@ -302,9 +302,9 @@ function readDeps(taskConfig){
 				for(var ns in nsCache){
 					var modnsSubPath = modSubPath + "/" + ns;
 					var config = readConfig(modnsSubPath, taskConfig.mod[mod]);
-					if(!config.loadPriority)
+					if(config.loadPriority == 500)
 						config.loadPriority = parentConfig.loadPriority + 0.1;
-					if(!config.srcPriority)
+					if(config.srcPriority == 500)
 						config.srcPriority = parentConfig.srcPriority + 0.1;
 				};
       });
@@ -325,6 +325,9 @@ function readConfig(nsSubPath, modConfig){
 			config[key] = modConfig[key];
 		}
 	}
+	if(!config.initPriority) config.initPriority = 100;
+	if(!config.loadPriority) config.loadPriority = 500;
+	if(!config.srcPriority) config.srcPriority = 500;
 	cache[nsSubPath] = config;
 	return config;
 }
@@ -335,26 +338,26 @@ function readPriorities(taskConfig){
 		if(!config) continue;
 		if(fs.existsSync(nsSubPath + "/init.js"))
 			taskConfig.load.push({
-				priority: config.initPriority || 100, 
+				priority: config.initPriority, 
 				path: nsSubPath + "/init.js",
 				config: config
 			});
 
 		if(fs.existsSync(nsSubPath + "/load.js"))
 			taskConfig.load.push({
-				priority: config.loadPriority || 500, 
+				priority: config.loadPriority, 
 				path: nsSubPath + "/load.js",
 				config: config
 			});
 		else if(fs.existsSync(nsSubPath + "/loader.js"))
 			taskConfig.load.push({
-				priority: config.loadPriority || 500, 
+				priority: config.loadPriority, 
 				path: nsSubPath + "/loader.js",
 				config: config
 			});
 		if(fs.existsSync(nsSubPath + "/src"))
 			taskConfig.src.push({
-				priority: config.srcPriority || 500, 
+				priority: config.srcPriority, 
 				path: nsSubPath + "/src"
 			});
 	}
@@ -453,8 +456,13 @@ function fillDir(dir, tdir, dj, env){
 				var doloop = true;
 				if(config.select){
 					for(var key in config.select){
-						if(subenv[key] != config.select[key])
-							doloop = false;
+						if(config.select[key]){
+							if(subenv[key] != config.select[key])
+								doloop = false;
+						}else{
+							if(subenv[key])
+								doloop = false;
+						}
 					}
 				}
 				if(!doloop) continue;

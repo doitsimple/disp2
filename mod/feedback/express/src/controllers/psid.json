@@ -1,0 +1,7 @@
+{
+		"config": {
+				"envlink": "feedback",
+				"filename": "^^=name$$.js",
+				"tpl": "psid.feedback.js"
+		}
+}

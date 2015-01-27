@@ -262,7 +262,6 @@ function extendSchema(schema, key, env){
 		if(f.upload){
 			var nameStr = ucfirst(schema.name) + ucfirst(f.name); 
 			if(!f.media) f.media = "Image";
-			if(!env.apis) env.apis = {};
 			env.apis["upload" + nameStr] = {
 				"route": schema.name + "/" + f.name,
 				"text": "上传" + f.text,

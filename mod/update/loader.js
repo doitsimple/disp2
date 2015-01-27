@@ -1,6 +1,32 @@
 module.exports = function(env, config){
-	if(!config) return;
 
+	env.schemas.version = {
+		"fields": [
+			{
+        "name": "_id",
+        "type": "BigInteger",
+        "default": "autoinc",
+        "auto": true
+      },
+			{
+				"name": "version",
+				"type": "Number"
+			},
+			{
+				"name": "apk",
+				"type": "Path",
+				"text": "apk文件"
+			},
+      {
+        "name":"create_time",
+        "type":"DateTime",
+        "text": "创建时间",
+        "default": "now",
+        "auto": true
+      }
+		]
+	}
+	if(!config) return;
 	if(config.frontend){
 		env.apis.checkUpdate = {
 			"method": "post",
@@ -11,18 +37,19 @@ module.exports = function(env, config){
         }
       ]
 		};
-		env.apis.downloadUpdate = {
-      "method": "get",
+		env.apis.downloadLatest = {
+			"route": "latest.apk",
+			"method": "get",
       "text": "下载最新版本"
 		};
 	}
 	if(config.backend){
-		env.apis["uploadUpdateFile"] = {
-      "text": "上传最新版本",
+		env.apis.uploadUpdateFile = {
+			"text": "上传APK",
       "multipart": true,
       "method": "post",
       "media": "File",
       "auth": true
-    };
+		}
 	}
 }

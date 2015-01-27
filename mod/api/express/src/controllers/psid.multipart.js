@@ -29,9 +29,11 @@ exports.download^^=methods.ucfirst(name)$$ = function(req, res){
 ^^}else{$$
 		res.setHeader('Content-Type', 'image/jpeg');
 ^^}$$
+//		fn(null, fs.readFileSync(fpath));
 		res.send(fs.readFileSync(fpath));
 	}
 	else
-		res.status(500).send({error: "not exist"});
+		res.send({error: "file not exist" + fpath});
+//		fn("file not exist" + fpath);
 }
 
