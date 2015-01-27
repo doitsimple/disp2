@@ -77,17 +77,18 @@ function set(config){
 function run(task){
 	var taskConfig;
 // get task config
+	console.log("\x1b[1;36m" + "task " + task + " begins", "\x1b[0m");
+	console.log("\x1b[1;35m" + "dir: " + path.resolve("."), "\x1b[0m");
 	if(task == "main")
 		taskConfig = globalConfig.task[task];
 	else{
 // if not main, append to main
 		if(!globalConfig.task[task]){
-			console.log("no task: " + task);
+			console.error("no task: " + task);
 			process.exit(0);
 		}
 		taskConfig = globalConfig.task["main"];
 		replaceParams(taskConfig, globalConfig.task[task]);
-		console.log(taskConfig);
 	}
 	if(!taskConfig){
 		console.error("task " + task + " is not exist");
@@ -98,12 +99,12 @@ function run(task){
 	if(!taskConfig.env) taskConfig.env = {};
 	libFile.mkdirpSync(taskConfig.target);
 
-
+	console.log("\x1b[1;32m", "load configs ...", "\x1b[0m");
 	readDeps(taskConfig);
 // read priorities and find all available path
 	readPriorities(taskConfig);
 
-	console.log("\nload configs ...");
+	console.log("\x1b[1;32m", "run init scripts ...", "\x1b[0m");
 
 	taskConfig.load.sort(function(a,b){
 		if(a.priority == b.priority) return a.path.localeCompare(b.path);
@@ -116,7 +117,7 @@ function run(task){
 //	makeFromNs(taskConfig);
 //	readConfigFromMods(taskConfig);
 //	makeFromMods(taskConfig);
-	console.log("\ngenerate files ...");
+	console.log("\x1b[1;32m", "generate files ...", "\x1b[0m");
 	taskConfig.src.sort(function(a,b){
 		if(a.priority == b.priority) return a.path.localeCompare(b.path);
 		return a.priority - b.priority;
@@ -124,6 +125,7 @@ function run(task){
 		console.log(srcConfig.path + " " + srcConfig.priority);
 		walk(srcConfig.path, taskConfig.target, taskConfig.env);
 	});
+	console.log("\x1b[1;36m" + "task " + task + " completed!", "\x1b[0m\n");
 	return rtn;
 }
 
@@ -279,7 +281,6 @@ function readNsDeps(ns, taskConfig){
 		var nsSubPath = nsPath + "/" + ns;
 		if(fs.existsSync(nsSubPath)){
 			var config = readConfig(nsSubPath);
-			console.log(config);
 			if(config.dep){
 				libObject.each(config.dep, function(dep){
 					readNsDeps(dep, taskConfig);
@@ -316,7 +317,7 @@ function readConfig(nsSubPath, modConfig){
 	if(cache.hasOwnProperty(nsSubPath)) return null;
 	var config = {};
   if(fs.existsSync(nsSubPath + "/config.json")){
-    console.log("\tget: " + nsSubPath + "/config.json");
+    console.log(nsSubPath + "/config.json");
     config = libFile.readJSON(nsSubPath + "/config.json") || {};
   }
 	if(modConfig){

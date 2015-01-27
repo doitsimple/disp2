@@ -185,8 +185,10 @@ Model.method.put = function(where, doc, fn){
 	});
 }
 
-Model.method.delete = function(json, fn){
-	Model.remove(json, function(err) {
+Model.method.delete = function(where, fn){
+	if(typeof where == "string" || typeof where == "number")
+		where = {"^^=idField.name$$": where};
+	Model.remove(where, function(err) {
     if (err) fn(err);
 		else fn(null);
   });
@@ -255,7 +257,6 @@ Model.method.VerifyCode = function(params, fn){
       $gt: new Date().getTime() - params.minutes*60000
     }
   };
-	console.log(json);
 	Model.findOne(json, function(err, doc){
 		if(err){
 			fn(err);
@@ -282,7 +283,6 @@ Model.method.verify^^=ucfirst(f.name)$$ById = function(id, password, cb) {
 ^^}})$$
 
 Model.method.posts = function(array, fn){
-	console.log("posts");
 	async.eachSeries(array, Model.method.post, function(err){
 		if(err) fn(err);
 		else fn(null, {success: true});

@@ -37,11 +37,6 @@ module.exports = function(env, config){
         }
       ]
 		};
-		env.apis.downloadLatest = {
-			"route": "latest.apk",
-			"method": "get",
-      "text": "下载最新版本"
-		};
 	}
 	if(config.backend){
 		env.apis.uploadUpdateFile = {

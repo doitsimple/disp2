@@ -1,5 +1,5 @@
 var url = require("url");
-module.exports = function(env){
+module.exports = function(env, config){
 	if(!env.host) env.host = "http://127.0.0.1";
 	if(env.port)
 		env.serverUrl = env.host + ":" + env.port;
@@ -12,4 +12,6 @@ module.exports = function(env){
 		env.protocol = protocol.substr(0, protocol.length - 1);
 	else
 		env.protocol = "http";
+	if(!env.hasOwnProperty("log"))
+		env.log = false;
 }

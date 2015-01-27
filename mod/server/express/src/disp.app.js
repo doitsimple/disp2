@@ -19,6 +19,25 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/^^=global.staticPath$$'));
 ^^}$$
 
+^^if(global.log){$$
+app.use(function(req, res, next){
+//	console.log(Object.keys(req));
+	var log = "\x1b[1;36m";
+	log += req.method + " " + req.originalUrl + "\n";
+	if(req.method != "GET" && req.method != "DELETE"){
+		var bodystr = JSON.stringify(req.body,undefined,2);
+		if(bodystr != "{}")
+			log+=JSON.stringify(req.body,undefined,2)+"\n";
+	}
+	log+=req.headers['user-agent'] + "\n";
+	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	log+=ip;
+	log+="\x1b[0m";
+	console.log(log);
+	next();
+});
+^^}$$
+
 app.set('port', ^^=global.port$$);
 
 ^^for(var key in global.nodeAppContents){$$

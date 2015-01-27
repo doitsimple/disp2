@@ -87,7 +87,7 @@ table.Float = table.float = {
 table.Date = table.date = {
 	"name": "date",
 	"basic": "string",
-	"mongoose": "String",
+	"mongoose": "Date",
   "mysql": "DATE",
   "sqlite": "TEXT",
   "java": "Date",
