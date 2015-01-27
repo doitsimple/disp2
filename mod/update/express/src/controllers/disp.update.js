@@ -2,6 +2,7 @@ var uploadPath = "^^=global.uploadPath$$";
 var path = require("path");
 var fs = require("fs");
 var Db = require("../db");
+var libString =require("../lib/string");
 function getLatestVersion(fn){
 	Db.models.version.method.gets({sort: {version: -1}, limit: 1}, {}, function(err, doc){
 		if(err) {fn(err); return;}
@@ -17,8 +18,12 @@ module.exports.checkUpdate = function(req, fn){
 		if(err) {fn(err); return;}
 		if(doc == null)
 			fn("nothing updated");
-		if(version < doc.version)
-			fn(null, {version: doc.version});
+		console.log(version);
+		console.log(doc.version);
+		if(libString.compareVersion(version, doc.version) < 0)
+			fn(null, {"existUpdate": true});
+		else
+			fn(null, {"existUpdate": false});
 	});
 }
 module.exports.downloadLatest = function(req, fn){

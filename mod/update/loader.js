@@ -10,7 +10,7 @@ module.exports = function(env, config){
       },
 			{
 				"name": "version",
-				"type": "Number"
+				"type": "String"
 			},
 			{
 				"name": "apk",

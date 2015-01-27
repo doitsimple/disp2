@@ -4,11 +4,13 @@ module.exports.sendRes = function(func){
 			if(errorCode)
 				res.send({
 					errorCode: errorCode,
-					error: err
+					error: err,
+					result: result
 				});
 			else if(err)
 				res.send({
-					error: err
+					error: err,
+					result: result
 				});
 			else
 				res.send(result);
