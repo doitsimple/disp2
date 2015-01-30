@@ -174,6 +174,7 @@ table.Path = table.path = {
 	"jstest": "'a'"
 };
 
+
 table.Buffer = table.buffer = table.Blob = table.blog = {
 	"name": "buffer",
 	"basic": "string",

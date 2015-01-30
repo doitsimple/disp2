@@ -50,6 +50,7 @@ config.root = dispRoot;
 core.set(config);
 fs.writeFileSync(".project.json", JSON.stringify(config, undefined, 2));
 var res = core.run(task);
-fs.writeFileSync(".result.json", JSON.stringify(res, undefined, 2));
+console.log(config.task[task].target);
+fs.writeFileSync(config.task[task].target + "/.result.json", JSON.stringify(res, undefined, 2));
 
 

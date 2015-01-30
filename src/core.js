@@ -13,6 +13,7 @@ var globalConfig;
 var cache = {};
 var nsCache = {};
 var tmplCache = {};
+var ignoreFileListCache = {};
 var rtn = {files: {}, envs: {}};
 /* 
 !!! two dim array is not allowed in config
@@ -123,6 +124,7 @@ function run(task){
 		return a.priority - b.priority;
 	}).forEach(function(srcConfig){
 		console.log(srcConfig.path + " " + srcConfig.priority);
+		loadCache(srcConfig.path);
 		walk(srcConfig.path, taskConfig.target, taskConfig.env);
 	});
 	console.log("\x1b[1;36m" + "task " + task + " completed!", "\x1b[0m\n");
@@ -192,7 +194,20 @@ function tmpl(config, data){
 		return p.join('');
 	}
 }
-
+function loadCache(dirpath){
+	libObject.clear(ignoreFileListCache);
+	if(fs.existsSync(dirpath + "/.result.json")){
+		ignoreFileListCache = libFile.readJSON(dirpath + "/.result.json");
+	}else{
+		ignoreFileListCache = {};
+	}
+	ignoreFileListCache.root = dirpath;
+}
+function isGenFile(file){
+	if(!ignoreFileListCache.files) return false;
+	var rpath = path.relative(ignoreFileListCache.root, file);
+	return ignoreFileListCache.files[rpath];
+}
 
 function addParams(config, defaultConfig){
 	if(!config) {config = defaultConfig; return; }
@@ -507,8 +522,8 @@ function walk(dir, tdir, env){
 	if(fs.existsSync(dir+"/psid.json")){
 		dj = libFile.readJSON(dir+"/psid.json");
 		if(dj.ignore){
-			if(fs.existsSync(tdir))
-				return 0;
+//			if(fs.existsSync(tdir))
+			return 0;
 		}
 		if(dj.mv)
 			tdir = path.dirname(tdir) + "/" + tmpl({str: dj.mv}, {global: env});
@@ -528,6 +543,9 @@ function walk(dir, tdir, env){
 			return 0;
 		}
 		var p = dir + '/' + f;
+		if(isGenFile(p)){
+			return 0;
+		}
 		var t;
 		// support disp. in directory name
 		var	stat = fs.statSync(p);
@@ -537,7 +555,7 @@ function walk(dir, tdir, env){
 		}
 		// if begin with disp, format the file
 		if(f.match(/^disp\./)){
-			t = tdir + '/' + f.replace(/^disp./, "");	
+			t = tdir + '/' + f.replace(/^disp./, "");
 			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			fs.writeFileSync(t, tmpl({key: p}, {global: env}));

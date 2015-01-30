@@ -1,3 +1,4 @@
+var libObject = require("./lib/object.js");
 module.exports.sendRes = function(func){
 	var rtnFunc = function(req, res){
 		func(req, function(err, result, errorCode){
@@ -17,7 +18,9 @@ module.exports.sendRes = function(func){
 				json = result;
 /*^^if(global.log){$$*/
 			var log = "\x1b[1;35m";
-			if(typeof json != "string")
+			if(libObject.isArray(json))
+				log += "ARRAY";
+			else if(typeof json != "string")
 				log += JSON.stringify(json, undefined, 2);
 			else
 				log += "BLOCK";
