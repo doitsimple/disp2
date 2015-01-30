@@ -1,0 +1,29 @@
+{
+  "name": "disp2",
+  "version": "2.0.0",
+  "description": "Generator for any language.",
+  "main": "bin/disp2",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doitsimple/disp2.git"
+  },
+  "keywords": [
+    "generator",
+    "macro",
+    "language"
+  ],
+  "author": "Yuanpeng Zhou",
+  "license": "BSD-2-Clause",
+	"devDependencies": {
+			"mocha": "^2.1.0"
+	},
+  "bugs": {
+    "url": "https://github.com/doitsimple/disp2/issues"
+  }
+}

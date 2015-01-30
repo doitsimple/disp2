@@ -31,29 +31,28 @@ function set(config){
 		console.log("config error");
 		process.exit(1);
 	}
-//add default main task
+	//add default main task
 	var mainTaskConfig = config.task.main;
-	if(mainTaskConfig.ns){
-		if(!mainTaskConfig.load || !mainTaskConfig.load.length){
-			if(fs.existsSync("./load.js"))
-				mainTaskConfig.load = [{path: "./load.js", priority: 1}];
-			else
-				mainTaskConfig.load = [];
-		}
-		if(!mainTaskConfig.src || mainTaskConfig.src.length)
-			mainTaskConfig.src = [{path: ".", priority: 1000}];
-			
-		if(!mainTaskConfig.target)
-			mainTaskConfig.target = ".";
-	}else{
+	if(!mainTaskConfig.ns){
 		mainTaskConfig.ns = ["root"];
 	}
+	if(!mainTaskConfig.load || !mainTaskConfig.load.length){
+		if(fs.existsSync("./load.js"))
+			mainTaskConfig.load = [{path: "./load.js", priority: 1}];
+		else
+			mainTaskConfig.load = [];
+	}
+	if(!mainTaskConfig.src || mainTaskConfig.src.length)
+		mainTaskConfig.src = [{path: ".", priority: 1000}];
+	
+	if(!mainTaskConfig.target)
+		mainTaskConfig.target = ".";
 	if(typeof mainTaskConfig.ns == "string"){
 		mainTaskConfig.ns = [mainTaskConfig.ns];
 	}
-//add default sys config
+	//add default sys config
 	var defaultSys;
-	if( path.resolve(config.root) == path.resolve("."))
+	if(path.resolve(config.root) == path.resolve("."))
 		defaultSys = {
 			libPaths: ["../lib"],
 			nsPaths: ["../ns"],
@@ -68,11 +67,11 @@ function set(config){
 	if(!config.sys) config.sys = {};
 	addParams(config.sys, defaultSys);	
 
-// process @@ means json path
+	// process @@ means json path
 	mountJSON(config);
-// process ## means lib path
+	// process ## means lib path
 	intepretJSON(config);
-// set
+	// set
 	globalConfig = config;
 }
 function run(task){
@@ -86,7 +85,7 @@ function run(task){
 // if not main, append to main
 		if(!globalConfig.task[task]){
 			console.error("no task: " + task);
-			process.exit(0);
+			process.exit(1);
 		}
 		taskConfig = globalConfig.task["main"];
 		replaceParams(taskConfig, globalConfig.task[task]);
@@ -168,6 +167,7 @@ function tmpl(config, data){
 				win = subs[0];
 				wout = subs[1] || "";
 			}
+
 			wout = wout
 				.replace(/\n[\t ]+$/, "\n") //remove \s after last \n
 				.replace(/^[\t ]*\n/, "") // remove \s before/and first \n
@@ -539,7 +539,10 @@ function walk(dir, tdir, env){
 			 || f.match(/^psid\./)
 			 || f.match(/\.psid$/)
 			 || fs.existsSync(dir + "/" + f +".disp") 
-			 || fs.existsSync(dir + "/" + "disp." + f)){
+			 || fs.existsSync(dir + "/" + "disp." + f)
+			 || fs.existsSync(dir + "/" + f +".disp2") 
+			 || fs.existsSync(dir + "/" + "disp2." + f)
+			){
 			return 0;
 		}
 		var p = dir + '/' + f;
@@ -565,6 +568,18 @@ function walk(dir, tdir, env){
 			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			fs.writeFileSync(t, tmpl({key: p}, {global: env}));
+		}
+		else if(f.match(/^disp2\./)){
+			t = tdir + '/' + f.replace(/^disp2./, "");
+			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
+			libFile.mkdirpSync(path.dirname(t));
+			fs.writeFileSync(t, tmpl({key: p}, env));
+		}
+		else if(f.match(/\.disp2$/)){
+			t = tdir + '/' + f.replace(/\.disp$/, "");
+			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
+			libFile.mkdirpSync(path.dirname(t));
+			fs.writeFileSync(t, tmpl({key: p}, env));
 		}
 		else if(dir != tdir){
 			t = tdir + '/' + f;

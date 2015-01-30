@@ -3,4 +3,6 @@ README.md~
 node_modules
 **/dist/*
 .*
+*.test
 \#*\#
+example/1-simple/doc.txt
