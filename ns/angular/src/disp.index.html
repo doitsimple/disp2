@@ -44,6 +44,7 @@ $$
                 <a ng-click="toggle()">接口列表</a>
                 <ul class="dropdown-menu">
 									^^for( var key in global.apis){var api = global.apis[key];$$
+									^^if(api.isSignup || api.isSignin){ continue; }$$
                   <li><a ng-click="toggle()" href="#/^^=api.name$$">^^=api.text$$</a></li>
 									^^}$$
                 </ul>
@@ -51,7 +52,9 @@ $$
 						</ul>
             <!-- Right nav -->
             <ul class="nav navbar-nav navbar-right">
+							^^if(!global.secure){$$
 							<li ng-class="{active: isActive('/^^=global.signupApi.name$$')}"><a href="#/^^=global.signupApi.name$$" >注册</a></li>
+							^^}$$
 							^^if(global.signupSendCodeApi){$$
 							<li ng-class="{active: isActive('/^^=global.signupSendCodeApi.name$$')}"><a href="#/^^=global.signupSendCodeApi.name$$" >注册发送短信</a></li>
 							^^}$$

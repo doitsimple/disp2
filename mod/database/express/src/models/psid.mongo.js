@@ -159,6 +159,7 @@ Model.method.post = function(doc, fn){
   });
 }
 Model.method.put = function(where, doc, fn){
+	if(!fn) fn =function(){};
 	if(typeof where == "string" || typeof where == "number")
 		where = {"^^=idField.name$$": where};
 	Model.findOne(where, function(err, ori_doc){

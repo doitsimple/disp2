@@ -16,34 +16,34 @@ It's core function works like an advanced m4 language, but based on javascript.
 
 ## Install
 ### Use npm (TODO)
-'''
+```
 npm install --global disp2
-'''
+```
 
 ### Use git
-'''
+```
 git clone https://github.com/doitsimple/disp2
-'''
+```
 
 ## Getting Started
 
 Once installed with npm, you can create a project.json
 
 ### Example `project.json`
-'''
+```
 {
 	"env":{
 		"name": "Yu",
 		"hobby": "cooking"
 	}
 }
-'''
+```
 
 Then you can create any file begin with 'disp', like disp2.doc.txt
 ### Example `disp2.doc.txt`
-'''
+```
 ^^=name$$ likes ^^=hobby$$
-'''
+```
 
 ### Launch command
 if installed with npm -g
@@ -55,8 +55,8 @@ if cloned with git
 {path to repo}/bin/disp2
 ```
 
-Then you will see a doc.txt
-'''
+Then you will see a `doc.txt`
+```
 Yu likes cooking
-'''
+```
 

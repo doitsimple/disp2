@@ -14,6 +14,7 @@ rootApp.config(['$routeProvider',
 ^^for (var key in global.apis){
  var api = global.apis[key];
  var access;
+ if(global.secure && api.isSignup){continue;}
  if(api.isSignin || api.isSignup || api.isSignupSendCode) access = 3;
  else access = 2; $$
       when('/^^=api.name$$', {

@@ -19,5 +19,6 @@
 - (NSArray *)list;
 //查找指定对象
 - (^^=name$$Model *)getById:(NSString *)^^=idField.name$$;
-
+//更新指定数据
+- (void)upsertById:(NSString *)^^=idField.name$$ ^^=name$$Model:(^^=name$$Model *)updateItem;
 @end

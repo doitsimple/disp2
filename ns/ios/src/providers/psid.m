@@ -149,6 +149,32 @@ $$
     
     return item;
 }
+- (void)upsertById:(NSString *)^^=idField.name$$ ^^=name$$Model:(^^=name$$Model *)updateItem;
+{
+	^^=name$$Model * item = [self getById:^^=idField.name$$];
+
+	if (item._id == NULL) {
+		[self addItem:updateItem];
+	}else{
+		NSMutableString * string  = [[NSMutableString alloc] init];
+		NSMutableString * muString = [[NSMutableString alloc] initWithString:@"UPDATE ^^=name$$ SET "];
+^^fields.forEach(function(f){$$		
+		if ([updateItem.^^=f.name$$ != NULL) {
+				[muString appendFormat:@", %@ = '%@'" , @"_id" , updateItem.^^=f.name$$];
+		}
+^^})$$
+        
+	[muString appendString:[string substringFromIndex:2]];
+        
+	NSString * updateSql = [NSString stringWithFormat:@"%@ WHERE _id = '%@' ;", muString, ID];
+	BOOL res = [_database executeUpdate:updateSql];
+	if (!res) {
+		NSLog(@"error when creating db table");
+	} else {
+		NSLog(@"success to creating db table");
+	}
+    
+}
 
 //单例
 + (^^=name$$Utils *)sharedDatabase
