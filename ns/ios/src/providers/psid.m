@@ -153,20 +153,20 @@ $$
 {
 	^^=name$$Model * item = [self getById:^^=idField.name$$];
 
-	if (item._id == NULL) {
+	if (item.^^=idField.name$$ == NULL) {
 		[self addItem:updateItem];
 	}else{
 		NSMutableString * string  = [[NSMutableString alloc] init];
 		NSMutableString * muString = [[NSMutableString alloc] initWithString:@"UPDATE ^^=name$$ SET "];
 ^^fields.forEach(function(f){$$		
-		if ([updateItem.^^=f.name$$ != NULL) {
-				[muString appendFormat:@", %@ = '%@'" , @"_id" , updateItem.^^=f.name$$];
+		if (updateItem.^^=f.name$$ != NULL) {
+				[muString appendFormat:@", %@ = '%@'" , @"^^=idField.name$$" , updateItem.^^=f.name$$];
 		}
 ^^})$$
         
 	[muString appendString:[string substringFromIndex:2]];
         
-	NSString * updateSql = [NSString stringWithFormat:@"%@ WHERE _id = '%@' ;", muString, ID];
+	NSString * updateSql = [NSString stringWithFormat:@"%@ WHERE ^^=idField.name$$ = '%@' ;", muString, ^^=idField.name$$];
 	BOOL res = [_database executeUpdate:updateSql];
 	if (!res) {
 		NSLog(@"error when creating db table");
