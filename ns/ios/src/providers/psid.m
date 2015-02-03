@@ -149,7 +149,7 @@ $$
     
     return item;
 }
-- (void)upsertById:(NSString *)^^=idField.name$$ ^^=name$$Model:(^^=name$$Model *)updateItem;
+- (void)upsertById:(NSString *)^^=idField.name$$ ^^=name$$Model:(^^=name$$Model *)updateItem
 {
 	^^=name$$Model * item = [self getById:^^=idField.name$$];
 
@@ -164,16 +164,16 @@ $$
 		}
 ^^})$$
         
-	[muString appendString:[string substringFromIndex:2]];
-        
-	NSString * updateSql = [NSString stringWithFormat:@"%@ WHERE ^^=idField.name$$ = '%@' ;", muString, ^^=idField.name$$];
-	BOOL res = [_database executeUpdate:updateSql];
-	if (!res) {
-		NSLog(@"error when creating db table");
-	} else {
-		NSLog(@"success to creating db table");
+		[muString appendString:[string substringFromIndex:2]];
+		
+		NSString * updateSql = [NSString stringWithFormat:@"%@ WHERE ^^=idField.name$$ = '%@' ;", muString, ^^=idField.name$$];
+		BOOL res = [_database executeUpdate:updateSql];
+		if (!res) {
+			NSLog(@"error when creating db table");
+		} else {
+			NSLog(@"success to creating db table");
+		}
 	}
-    
 }
 
 //单例
