@@ -18,7 +18,9 @@ module.exports.sendRes = function(func){
 				json = result;
 /*^^if(global.log){$$*/
 			var log = "\x1b[1;35m";
-			if(libObject.isArray(json))
+			if(libObject.isBuffer(json))
+				log += "BUFFER";
+			else if(libObject.isArray(json))
 				log += "ARRAY";
 			else if(typeof json != "string")
 				log += JSON.stringify(json, undefined, 2);
