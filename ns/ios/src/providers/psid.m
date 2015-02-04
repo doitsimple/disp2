@@ -160,7 +160,7 @@ $$
 		NSMutableString * muString = [[NSMutableString alloc] initWithString:@"UPDATE ^^=name$$ SET "];
 ^^fields.forEach(function(f){$$		
 		if (updateItem.^^=f.name$$ != NULL) {
-				[muString appendFormat:@", %@ = '%@'" , @"^^=f.name$$" , updateItem.^^=f.name$$];
+				[string appendFormat:@", %@ = '%@'" , @"^^=f.name$$" , updateItem.^^=f.name$$];
 		}
 ^^})$$
         

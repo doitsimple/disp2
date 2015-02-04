@@ -1,50 +1,27 @@
+var ucfirst = require("../../lib/js/string").ucfirst;
 module.exports = function(env, config){
-
-	env.schemas.version = {
-		"fields": [
-			{
-        "name": "_id",
-        "type": "BigInteger",
-        "default": "autoinc",
-        "auto": true
-      },
-			{
-				"name": "version",
-				"type": "String"
-			},
-			{
-				"name": "apk",
-				"type": "Path",
-				"text": "apk文件"
-			},
-      {
-        "name":"create_time",
-        "type":"DateTime",
-        "text": "创建时间",
-        "default": "now",
-        "auto": true
-      }
-		]
-	}
 	if(!config) return;
-	if(config.frontend){
-		env.apis.checkUpdate = {
-			"method": "post",
-      "text": "查看版本更新",
-      "fields": [
-        {
-          "name": "version"
-        }
-      ]
-		};
-	}
-	if(config.backend){
-		env.apis.uploadUpdateFile = {
-			"text": "上传APK",
-      "multipart": true,
-      "method": "post",
-      "media": "File",
-      "auth": true
+	for (var name in env.update){
+		env.update[name].name = name;
+		if(config.frontend){
+			env.apis["checkUpdate" + ucfirst(name)] = {
+				"method": "post",
+				"text": "查看" +name+ "版本更新",
+				"fields": [
+					{
+						"name": "version"
+					}
+				]
+			};
+		}
+		if(config.backend){
+			env.apis["upload" + ucfirst(name)] = {
+				"text": "上传" + name,
+				"multipart": true,
+				"method": "post",
+				"media": "File",
+				"auth": true
+			};
 		}
 	}
 }

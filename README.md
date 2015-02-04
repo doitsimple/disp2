@@ -5,13 +5,13 @@
 
 DISP2 is a self-generated templating engine for any language. 
 
-It's core function works like an advanced m4 language, but based on javascript.
+Its core function works like advanced m4 language, but based on javascript.
 
 **Features:**
 
 - Pure nodejs (without any dependencies)
 - Run on all mainstream OS (like Linux, Windows and Mac)
-- Easily to learn (only two grammars)
+- Easy to learn (only two grammars)
 - Easily extendable (you can write your own modules)
 
 ## Install
@@ -29,7 +29,7 @@ git clone https://github.com/doitsimple/disp2
 
 Once installed with npm, you can create a project.json
 
-### Example `project.json`
+#### Example `project.json`
 ```
 {
 	"env":{
@@ -40,7 +40,7 @@ Once installed with npm, you can create a project.json
 ```
 
 Then you can create any file begin with 'disp', like disp2.doc.txt
-### Example `disp2.doc.txt`
+#### Example `disp2.doc.txt`
 ```
 ^^=name$$ likes ^^=hobby$$
 ```
@@ -55,7 +55,9 @@ if cloned with git
 {path to repo}/bin/disp2
 ```
 
-Then you will see a `doc.txt`
+### Result
+Then you will see a doc.txt
+#### Example `doc.txt`
 ```
 Yu likes cooking
 ```

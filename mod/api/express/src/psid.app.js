@@ -1,7 +1,12 @@
+var path = require("path");
+var libFile=require("./lib/file");
 ^^if(global.hasMultipart){$$
 var multipart = require('connect-multiparty');
-var path = require("path");
 ^^}$$
+^^if(global.uploadPath){$$
+var uploadPath = require("./constant").uploadPath;
+^^}$$
+
 var common = require("./controllers/common");
 var sendRes = require("./response").sendRes;
 
