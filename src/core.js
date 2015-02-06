@@ -38,7 +38,7 @@ function set(config){
 	}
 	if(!mainTaskConfig.load || !mainTaskConfig.load.length){
 		if(fs.existsSync("./load.js"))
-			mainTaskConfig.load = [{path: "./load.js", priority: 1}];
+			mainTaskConfig.load = [{path: path.resolve("./load.js"), priority: 100}];
 		else
 			mainTaskConfig.load = [];
 	}
@@ -69,10 +69,10 @@ function set(config){
 
 	// process @@ means json path
 	mountJSON(config);
-	// process ## means lib path
-	intepretJSON(config);
 	// set
 	globalConfig = config;
+	// process ## means lib path
+	intepretJSON(config);
 }
 function run(task){
 	var taskConfig;
@@ -277,7 +277,7 @@ function intepretJSON(config){
 		
 		if(e[0] == "#" && e[1] == "#"){
 			var f = e.substr(2);
-			config.sys.libPaths.forEach(function(lib){
+			globalConfig.sys.libPaths.forEach(function(lib){
 				if(fs.existsSync(lib + "/" + f)){
 					if(i == undefined){
 						itConfig[key] = lib + "/" + f;
@@ -521,6 +521,8 @@ function walk(dir, tdir, env){
 	var dj = {};
 	if(fs.existsSync(dir+"/psid.json")){
 		dj = libFile.readJSON(dir+"/psid.json");
+		mountJSON(dj);
+		intepretJSON(dj);
 		if(dj.ignore){
 //			if(fs.existsSync(tdir))
 			return 0;

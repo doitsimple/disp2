@@ -5,6 +5,10 @@
 
 DISP2 is a self-generated templating engine for any language. 
 
+It is essentially a JSON converter, which convert a legal JSON format file to a series of text files. You can define the generation criteria by you own.
+
+For complex criterias, you can event write Javascript in the template file.
+
 Its core function works like advanced m4 language, but based on javascript.
 
 **Features:**
@@ -61,4 +65,9 @@ Then you will see a doc.txt
 ```
 Yu likes cooking
 ```
+See `example/1-simple` for the code.
 
+## More examples
+### Use Javascript to generate a list
+### A 
+### Use Javascript to generate a list

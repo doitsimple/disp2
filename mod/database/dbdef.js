@@ -133,6 +133,16 @@ table.String = table.string = {
   "js": "string",
 	"jstest": "'a'"
 };
+table.ObjectId = table.objectid = {
+	"name": "string",
+	"basic": "string",
+	"mongoose": "mongoose.Schema.Types.ObjectId",
+  "mysql": "CHAR(24)",
+  "sqlite": "TEXT",
+  "java": "String",
+  "js": "string",
+	"jstest": "'a'"
+};
 table.Array = table.array = {
 	"name": "string",
 	"basic": "string",
@@ -230,7 +240,8 @@ function extendSchema(schema, key, env){
 		env.hasMongo = true;
 	if(schema.engine == "mysql")
 		env.hasMysql = true;
-	
+
+
 
 	if(schema.isUserSchema) env.userSchema = schema;
 	else schema.isUserSchema = false;
@@ -251,12 +262,25 @@ function extendSchema(schema, key, env){
 	if(!schema.timeField) schema.timeField = false;
 
 	schema.fields.forEach(function(f){
+		if(f.isAutoInc){
+			f.type = "BigInt";
+      f.default = "autoinc";
+      f.auto = true;
+		}
+		if(f.isObjectId){
+			f.type = "ObjectId";
+      f.auto = true;
+		}
+
 		if(f.isUserId) schema.userIdField = f;
 		if(f.isPhone) schema.phoneField = f;
 		if(f.isEmail) schema.emailField = f;
 		if(f.isPassword) schema.passwordField = f;
 		if(f.isUsername) schema.usernameField = f;
-		if(f.isToken)	schema.tokenField = f;
+		if(f.isToken){
+			schema.tokenField = f;
+			f.unique = true;
+		}
 		if(f.isCode)	schema.codeField = f;
 		if(f.isTime)	schema.timeField = f;
 		

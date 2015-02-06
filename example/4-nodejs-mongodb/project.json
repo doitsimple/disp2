@@ -1,0 +1,33 @@
+{
+		"ns": "nodejs",
+		"mod": {
+				"database": true
+		},
+		"env":{
+				"mongo": {
+						"host": "localhost",
+						"port": 27017,
+						"db": "test"
+				},
+				"schemas": {
+						"testcontent": {
+								"fields": [
+										{
+												"name": "_id",
+												"isObjectId": true
+										},
+										{
+												"name": "name",
+												"type": "string",
+												"unique": true
+										},
+										{
+												"name": "content",
+												"type": "string",
+												"required": true
+										}
+								]
+						}
+				}
+		}
+}

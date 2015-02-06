@@ -24,12 +24,35 @@ import android.graphics.Bitmap.CompressFormat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
+/* need 
+System.setProperty("http.keepAlive", "false");
+for long connection
+*/
 public class HttpUtils {
 	public static int connectTimeout = 21000;
 	public static int readTimeout = 21000;
 
 	public static HttpURLConnection createConnection(String urlString)
+		throws KeyManagementException, NoSuchAlgorithmException,
+		KeyStoreException, MalformedURLException, IOException,
+		JSONException {
+		URL url = new URL(urlString);
+		if (url.getProtocol() == "https") {
+			HttpsURLConnection urlConnection = (HttpsURLConnection) url
+				.openConnection();
+			urlConnection.setConnectTimeout(connectTimeout);
+			urlConnection.setReadTimeout(readTimeout);
+			TrustModifier.relaxHostChecking(urlConnection);
+			return urlConnection;
+		} else {
+			HttpURLConnection urlConnection = (HttpURLConnection) url
+				.openConnection();
+			urlConnection.setConnectTimeout(connectTimeout);
+			urlConnection.setReadTimeout(readTimeout);
+			return urlConnection;
+		}
+	}
+	public static HttpURLConnection createConnection(String urlString, int connectTimeout, int readTimeout)
 		throws KeyManagementException, NoSuchAlgorithmException,
 		KeyStoreException, MalformedURLException, IOException,
 		JSONException {
@@ -132,6 +155,21 @@ public class HttpUtils {
 	public static HttpResult postJSONBearer(String urlString, JSONObject jo, String token) throws IOException, JSONException,
 		KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 		HttpURLConnection urlConnection = createConnection(urlString);
+		urlConnection.setRequestMethod("POST");
+		urlConnection.setRequestProperty("Content-Type", "application/json");
+		urlConnection.setRequestProperty("Authorization", "Bearer " + token);
+		urlConnection.setDoOutput(true);
+		byte[] outputInBytes = jo.toString().getBytes("UTF-8");
+		OutputStream os = urlConnection.getOutputStream();
+		os.write(outputInBytes);
+		os.flush();
+		os.close();
+		return new HttpResult(urlConnection);
+	}
+
+	public static HttpResult postJSONBearer(String urlString, JSONObject jo, String token, int timeout) throws IOException, JSONException,
+		KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+		HttpURLConnection urlConnection = createConnection(urlString, timeout, timeout);
 		urlConnection.setRequestMethod("POST");
 		urlConnection.setRequestProperty("Content-Type", "application/json");
 		urlConnection.setRequestProperty("Authorization", "Bearer " + token);

@@ -2,6 +2,7 @@
 var db = global.codeSchema.name;
 var userDb = global.userSchema.name;
 var schema = global.codeSchema;
+var async = require("async");
 if(!local.pseudo) pseudo = false;
 $$
 var Db = require('../models/^^=db$$');
@@ -9,17 +10,27 @@ var userDb = require('../models/^^=userDb$$');
 var random = require('../lib/random');
 var webreq = require('../lib/webreq');
 
-function sendSms(req, fn){
-	var body = req.body;
+function sendSms(body, fn){
+	if(body.body) body = body.body;
 	if(!body.phone)
 		fn("no phone");
 
 	var json = ^^=JSON.stringify(params)$$;
 	json.^^=phoneField$$ = body.phone;
 
-	var code = random.genNum(6);
-	json.^^=codeField$$ = code;
+	var code = body.code || random.genNum(6);
 
+	json.^^=codeField$$ = code;
+	^^if(local.code2Field){$$
+	if(body.code2Field){
+		json.^^=code2Field$$ = body.code2;
+	}
+  ^^}$$
+	^^if(local.templateField){$$
+	if(body.templateField){
+		json.^^=templateField$$ = body.template;
+	}
+  ^^}$$
 	Db.method.get({"^^=schema.phoneField.name$$": body.phone}, {}, function(err, doc){
 		if(err){
 			fn(err);
@@ -62,6 +73,13 @@ function sendSms(req, fn){
 
 }
 module.exports.sendSms = sendSms;
+module.exports.sendSmsMultiple = function(body, fn){
+	if(body.body) body = body.body;
+	async.eachSeries(body.configs, function(config, cb){
+		sendSms(config, cb);
+	}, fn);
+
+}
 module.exports.sendSmsSignup = function(req, fn){
 	userDb.method.get({"^^=global.userSchema.phoneField.name$$":req.body.phone}, {}, function(err, doc){
 		if(err){

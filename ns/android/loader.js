@@ -1,4 +1,4 @@
-
+var libObject = require("../../lib/js/object.js");
 module.exports = function(env){
 	if(!env.schemas || !env.apis){
 		console.error("must have schemas and apis");
@@ -14,6 +14,8 @@ module.exports = function(env){
 	else
 		env.serverUrl = env.host;
 
+	if(!env.dep)
+		env.dep = {files: []};
 
 
 }

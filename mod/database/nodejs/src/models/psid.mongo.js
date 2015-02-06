@@ -19,14 +19,16 @@ function getDefault(field){
 	}
 }
 $$
-// Define our user schema
 var json = {};
-^^var uniques = [];fields.forEach(function(field){$$
+^^var uniques = [];fields.forEach(function(field){
+if(!field.isObjectId){
+$$
 json.^^=field.name$$ = { type: ^^=dbdef.getType(field, "mongoose")$$^^if(field.required){$$, required: true^^}$$^^if(field.default){$$^^=getDefault(field)$$^^}$$ };
 ^^if(field.unique){
 uniques.push("\""+field.name+"\": 1");
 }$$
-^^})$$
+^^}
+})$$
 var ^^=ucfirst(name)$$Schema = new mongoose.Schema(json);
 
 ^^if(autoIncField){$$
@@ -35,8 +37,6 @@ var AutoIncSchema = new mongoose.Schema({
 });
 var AutoIncModel = mongoose.model('^^=name$$_next', AutoIncSchema);
 ^^}$$
-// Define our user schema
-
 
 
 ^^if(passwordField || autoIncField){$$
@@ -104,21 +104,18 @@ var hat = require("../lib/random").hat;
 }
 ^^}$$
 
-
-
-
 var Model = mongoose.model('^^=name$$', ^^=ucfirst(name)$$Schema);
 ^^if(autoIncField){$$
 Model.autoinc = AutoIncModel;
 ^^}$$
 
 Model.method = {};
-Model.method.get = function(where, fields, fn){
+Model.method.get = Model.method.find = function(where, fields, fn){
 	if(typeof where == "string" || typeof where == "number")
 		where = {^^=idField.name$$: where};
 	Model.findOne(where, fields, fn);
 }
-Model.method.gets = function(criteria, fields, fn){
+Model.method.list = Model.method.gets = function(criteria, fields, fn){
 	var sort, limit, skip;
 	if(criteria.sort){
 		sort = criteria.sort;
@@ -148,7 +145,7 @@ Model.method.gets = function(criteria, fields, fn){
 Model.method.getsPage = function(criteria, fields, page, fn){
 
 }
-Model.method.post = function(doc, fn){
+Model.method.add = Model.method.post = function(doc, fn){
   var model = new Model(filter(doc));
   model.save(function(err, doc) {
     if (err)
@@ -158,7 +155,7 @@ Model.method.post = function(doc, fn){
 		}
   });
 }
-Model.method.put = function(where, doc, fn){
+Model.method.modify = Model.method.put = function(where, doc, fn){
 	if(!fn) fn =function(){};
 	if(typeof where == "string" || typeof where == "number")
 		where = {"^^=idField.name$$": where};
@@ -186,7 +183,7 @@ Model.method.put = function(where, doc, fn){
 	});
 }
 
-Model.method.delete = function(where, fn){
+Model.method.delete = Model.method.remove = function(where, fn){
 	if(typeof where == "string" || typeof where == "number")
 		where = {"^^=idField.name$$": where};
 	Model.remove(where, function(err) {
@@ -302,5 +299,6 @@ function filter(doc){
 	return json;
 }
 Model.method.filter = filter;
+Model.methods = Model.method;
 // Export the model
 module.exports = Model;

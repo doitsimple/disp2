@@ -49,16 +49,17 @@ function auth(username, password, done){
   });
 }
 
-function signin(req, fn){
-  if(!req.body.username || !req.body.password){
+function signin(body, fn){
+	if(body.body) body = body.body;
+  if(!body.username || !body.password){
     fn("no username or password");
     return;
   }
-  auth(req.body.username, req.body.password, fn);
+  auth(body.username, body.password, fn);
 }
 
-function signup(req, fn){
-	var body = req.body;
+function signup(body, fn){
+	if(body.body) body = body.body;
 	if(!body.username || !body.password){
 		fn("no username or password");
 		return;
