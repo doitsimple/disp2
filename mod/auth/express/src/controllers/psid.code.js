@@ -2,13 +2,13 @@
 var db = global.codeSchema.name;
 var userDb = global.userSchema.name;
 var schema = global.codeSchema;
-var async = require("async");
 if(!local.pseudo) pseudo = false;
 $$
 var Db = require('../models/^^=db$$');
 var userDb = require('../models/^^=userDb$$');
 var random = require('../lib/random');
 var webreq = require('../lib/webreq');
+var async = require("async");
 
 function sendSms(body, fn){
 	if(body.body) body = body.body;
@@ -22,15 +22,13 @@ function sendSms(body, fn){
 
 	json.^^=codeField$$ = code;
 	^^if(local.code2Field){$$
-	if(body.code2Field){
+	if(body.code2){
 		json.^^=code2Field$$ = body.code2;
 	}
   ^^}$$
-	^^if(local.templateField){$$
-	if(body.templateField){
-		json.^^=templateField$$ = body.template;
-	}
-  ^^}$$
+
+	json.^^=templateField$$ = body.template || "^^=templates[0]$$";
+
 	Db.method.get({"^^=schema.phoneField.name$$": body.phone}, {}, function(err, doc){
 		if(err){
 			fn(err);

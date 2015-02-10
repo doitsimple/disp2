@@ -6,3 +6,7 @@ node_modules
 *.test
 \#*\#
 example/1-simple/doc.txt
+example/4-nodejs-mongodb/db.js
+example/4-nodejs-mongodb/lib/
+example/4-nodejs-mongodb/models/
+example/4-nodejs-mongodb/package.json

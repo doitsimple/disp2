@@ -1,8 +1,0 @@
-
-.img-responsive.center {
-		margin: 0 auto;
-}
-
-^^for (var key in global.cssContents){$$
-^^=global.cssContents[key]$$
-^^}$$

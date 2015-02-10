@@ -31,7 +31,7 @@ app.use(function(req, res, next){
 	}
 	log+=req.headers['user-agent'] + "\n";
 	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-	log+=ip;
+	log+=ip + "\n" + new Date();
 	log+="\x1b[0m";
 	console.log(log);
 	next();

@@ -1,5 +1,6 @@
 var async = require('async');
 var mongoose = require('mongoose');
+var libObject = require("../lib/object");
 ^^if(passwordField){$$
 var libEncrypt = require("../lib/encrypt");
 ^^}$$
@@ -72,7 +73,7 @@ var AutoIncModel = mongoose.model('^^=name$$_next', AutoIncSchema);
 });
 ^^}$$
 
-
+/*internal methods*/
 ^^if(passwordField){$$
 ^^=ucfirst(name)$$Schema.methods.verifyPassword = function(password, cb) {
 	^^if(passwordField.encrypt){$$
@@ -109,13 +110,13 @@ var Model = mongoose.model('^^=name$$', ^^=ucfirst(name)$$Schema);
 Model.autoinc = AutoIncModel;
 ^^}$$
 
-Model.method = {};
-Model.method.get = Model.method.find = function(where, fields, fn){
+function get(where, fields, fn){
 	if(typeof where == "string" || typeof where == "number")
 		where = {^^=idField.name$$: where};
 	Model.findOne(where, fields, fn);
 }
-Model.method.list = Model.method.gets = function(criteria, fields, fn){
+
+function gets(criteria, fields, fn){
 	var sort, limit, skip;
 	if(criteria.sort){
 		sort = criteria.sort;
@@ -142,10 +143,18 @@ Model.method.list = Model.method.gets = function(criteria, fields, fn){
 		}
 	});
 }
-Model.method.getsPage = function(criteria, fields, page, fn){
-
+function inserts(array, fn){
+	async.eachSeries(array, insert, function(err){
+    if(err) fn(err);
+    else fn(null, {success: true});
+  });
 }
-Model.method.add = Model.method.post = function(doc, fn){
+
+function insert(doc, fn){
+	if(libObject.isArray(doc)){
+		inserts(doc, fn);
+		return;
+	}
   var model = new Model(filter(doc));
   model.save(function(err, doc) {
     if (err)
@@ -155,16 +164,23 @@ Model.method.add = Model.method.post = function(doc, fn){
 		}
   });
 }
-Model.method.modify = Model.method.put = function(where, doc, fn){
+function update(where, doc, fn){
 	if(!fn) fn =function(){};
 	if(typeof where == "string" || typeof where == "number")
 		where = {"^^=idField.name$$": where};
 	Model.findOne(where, function(err, ori_doc){
     if (err){	fn(err); return;}
 		if(!ori_doc){
-			fn("no doc find");
-			return;
+			if(doc.$upsert){
+				delete doc.$upsert;
+				insert(doc, fn);
+				return;
+			}else{
+				fn("no doc find");
+				return;
+			}
 		}
+		if(doc.$upsert)	delete doc.$upsert;
 		if(doc.$inc){
 			for(var key in doc.$inc){
 				ori_doc[key]+=doc.$inc[key];
@@ -183,7 +199,13 @@ Model.method.modify = Model.method.put = function(where, doc, fn){
 	});
 }
 
-Model.method.delete = Model.method.remove = function(where, fn){
+
+function upsert(where, doc, fn){
+	doc.$upsert = true;
+	update(where, doc, fn);
+}
+
+function remove(where, fn){
 	if(typeof where == "string" || typeof where == "number")
 		where = {"^^=idField.name$$": where};
 	Model.remove(where, function(err) {
@@ -191,7 +213,8 @@ Model.method.delete = Model.method.remove = function(where, fn){
 		else fn(null);
   });
 }
-Model.method.populate = function(callback){
+
+function populate(callback){
 //ensure uniqueness, mongoose unique has some unknown bug
 	Model.findOne({}, function(err, json){
 		if(err) {callback(err); return; }
@@ -226,7 +249,8 @@ AutoIncModel.findOne({}, function(err, json){
 
 }//Model.populate
 
-Model.method.drop = function(fn){
+
+function drop(fn){
 	Model.collection.drop(function(err){
 		var error = {}; 
 		error.error = err;
@@ -240,6 +264,20 @@ Model.method.drop = function(fn){
 	});
 }
 
+
+
+function filter(doc){
+  var json = {};
+	^^fields.forEach(function(field){$$
+	if(doc.^^=field.name$$)
+		json.^^=field.name$$ = doc.^^=field.name$$;
+	^^})$$
+	if(doc.$inc) json.$inc = doc.$inc;
+	return json;
+}
+
+Model.methods = {};
+
 ^^if(codeField){
 if(!idField || !timeField){
 	console.error("has codeField but no idField and timeField");
@@ -247,7 +285,7 @@ if(!idField || !timeField){
 }
 $$
 
-Model.method.VerifyCode = function(params, fn){
+Model.methods.VerifyCode = function(params, fn){
 	var json = {
     "^^=idField.name$$": params.id,
     "^^=codeField.name$$": params.code,
@@ -270,8 +308,8 @@ Model.method.VerifyCode = function(params, fn){
 ^^}$$
 
 ^^fields.forEach(function(f){if(f.encrypt){$$
-Model.method.verify^^=ucfirst(f.name)$$ById = function(id, password, cb) {
-	Model.method.get(id, {"^^=f.name$$":1}, function(err, result){
+Model.methods.verify^^=ucfirst(f.name)$$ById = function(id, password, cb) {
+	get(id, {"^^=f.name$$":1}, function(err, result){
 		libEncrypt.bcryptcompare(password, result.^^=f.name$$, function(err, isMatch) {
 			if (err) return cb(err);
 			cb(null, isMatch);
@@ -280,25 +318,18 @@ Model.method.verify^^=ucfirst(f.name)$$ById = function(id, password, cb) {
 }
 ^^}})$$
 
-Model.method.posts = function(array, fn){
-	async.eachSeries(array, Model.method.post, function(err){
-		if(err) fn(err);
-		else fn(null, {success: true});
-	});
 
-}
-
-
-function filter(doc){
-  var json = {};
-	^^fields.forEach(function(field){$$
-	if(doc.^^=field.name$$)
-		json.^^=field.name$$ = doc.^^=field.name$$;
-	^^})$$
-	if(doc.$inc) json.$inc = doc.$inc;
-	return json;
-}
-Model.method.filter = filter;
-Model.methods = Model.method;
+Model.methods.get = Model.methods.find = get;
+Model.methods.list = Model.methods.gets = gets;
+Model.methods.insert = Model.methods.add = Model.methods.post  = insert;
+Model.methods.update = Model.methods.modify = Model.methods.put = update;
+Model.methods.upsert = upsert;
+Model.methods.inserts = Model.methods.posts = Model.methods.adds = inserts;
+Model.methods.inserts = Model.methods.adds = Model.methods.posts = inserts;
+Model.methods.delete = Model.methods.remove = remove;
+Model.methods.drop = drop;
+Model.methods.populate = populate;
+Model.methods.filter = filter;
+Model.method = Model.methods; //for historical version
 // Export the model
 module.exports = Model;
