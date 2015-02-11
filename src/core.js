@@ -3,12 +3,14 @@ var path = require("path");
 var libString = require("../lib/js/string");
 var libArray = require("../lib/js/array");
 var libObject = require("../lib/js/object");
+var libFile = require("../lib/nodejs/file");
 var methods = {};
 libObject.extend1(methods, libString);
 libObject.extend1(methods, libArray);
 libObject.extend1(methods, libObject);
+libObject.extend1(methods, libFile);
 
-var libFile = require("../lib/nodejs/file");
+
 var globalConfig;
 var cache = {};
 var nsCache = {};
