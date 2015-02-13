@@ -1,0 +1,8 @@
+{
+  "name": "^^=name$$",
+  "dependencies": {
+^^methods.for(bowerDeps, function(pack, version, islast){$$
+	"^^=pack$$": "^^=version$$"^^if(!islast){$$,^^}$$
+^^})$$
+  }
+}

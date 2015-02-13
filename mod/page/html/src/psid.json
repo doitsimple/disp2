@@ -1,0 +1,7 @@
+{
+		"config": {
+				"filename": "^^=name$$.html",
+				"envlink": "pages",
+				"tpl": "psid.html"
+		}
+}
