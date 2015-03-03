@@ -78,7 +78,7 @@ module.exports.sendSmsMultiple = function(body, fn){
 	}, fn);
 
 }
-module.exports.sendSmsSignup = function(req, fn){
+module.exports.sendSmsCheckNoPhone = function(req, fn){
 	userDb.method.get({"^^=global.userSchema.phoneField.name$$":req.body.phone}, {}, function(err, doc){
 		if(err){
 			fn("database error: findOne failed: "+req.body.phone);
@@ -86,6 +86,19 @@ module.exports.sendSmsSignup = function(req, fn){
 		}
 		if(doc){
 			fn("phone already exists", null, 3);
+			return;
+		}
+		sendSms(req, fn);
+	});
+}
+module.exports.sendSmsCheckPhone = function(req, fn){
+	userDb.method.get({"^^=global.userSchema.phoneField.name$$":req.body.phone}, {}, function(err, doc){
+		if(err){
+			fn("database error: findOne failed: "+req.body.phone);
+			return;
+		}
+		if(!doc){
+			fn("phone not exists", null, 3);
 			return;
 		}
 		sendSms(req, fn);

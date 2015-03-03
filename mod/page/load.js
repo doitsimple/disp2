@@ -4,15 +4,20 @@ module.exports = function(env){
 	for (var name in env.pages){
 		var page = env.pages[name];
 		page.name = name;
+
+		page.htmlProperty = page.htmlProperty || "";
+		page.bodyContent = page.bodyContent || "";
+		if(!page.cssLibs) page.cssLibs = [];
+		if(!page.jsLibs) page.jsLibs = [];
 		if(page.css)
 			env.htmlCssContents[name]=libFile.readString(page.css);
-		if(page.cssLib)
-			libObject.each(page.cssLib, function(cssLib){
-				env.cssLibs.push(cssLib);
-			});
-		if(page.jsLib)
-			libObject.each(page.jsLib, function(jsLib){
-				env.jsLibs.push(jsLib);
-			});
+
+		libObject.each(page.cssLib, function(cssLib){
+			page.cssLibs.push(cssLib);
+		});
+
+		libObject.each(page.jsLib, function(jsLib){
+			page.jsLibs.push(jsLib);
+		});
 	}
 }

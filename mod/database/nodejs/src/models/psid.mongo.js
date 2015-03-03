@@ -117,7 +117,7 @@ function get(where, fields, fn){
 }
 
 function gets(criteria, fields, fn){
-	var sort, limit, skip;
+	var sort, limit, skip, lt, gt;
 	if(criteria.sort){
 		sort = criteria.sort;
 		delete criteria.sort;
@@ -130,8 +130,25 @@ function gets(criteria, fields, fn){
 		limit = criteria.limit;
 		delete criteria.limit;
 	}
+	if(criteria.lt){
+		lt = criteria.lt;
+		delete criteria.lt;
+	}
+	if(criteria.gt){
+		gt = criteria.gt;
+		delete criteria.gt;
+	}
 
 	var obj = Model.find(criteria, fields);
+	if(lt)
+		for(var key in lt){
+			obj = obj.where(key).lt(lt[key]);
+		}
+	
+	if(gt) 
+		for(var key in gt){
+			obj = obj.where(key).gt(gt[key]);
+		}
 	if(sort) obj = obj.sort(sort);
 	if(skip) obj = obj.skip(skip);
 	if(limit) obj = obj.limit(limit);

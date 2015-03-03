@@ -22,24 +22,28 @@ public class HttpResult {
 
 	public HttpResult(HttpURLConnection urlConnection) throws IOException,
 		JSONException {
-		this.statusCode = urlConnection.getResponseCode();
-		if(this.statusCode == 200){
-			InputStream is = new BufferedInputStream(urlConnection.getInputStream());
-			String str = StreamUtils.getStringFromInputStream(is);
-			is.close();
-			this.value = str;
+		try {
+			this.statusCode = urlConnection.getResponseCode();
+			if(this.statusCode == 200){
+				InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+				String str = StreamUtils.getStringFromInputStream(is);
+				is.close();
+				this.value = str;
 
-			if (str.charAt(0) == '{') {
-				JSONObject jo = new JSONObject(str);
-				this.response = jo;
-			} else if (str.charAt(0) == '[') {
-				JSONObject jo = new JSONObject();
-				jo.put("data", new JSONArray(str));
-				this.response = jo;
+				if (str.charAt(0) == '{') {
+					JSONObject jo = new JSONObject(str);
+					this.response = jo;
+				} else if (str.charAt(0) == '[') {
+					JSONObject jo = new JSONObject();
+					jo.put("data", new JSONArray(str));
+					this.response = jo;
+				}
 			}
+			urlConnection.disconnect();
+		}catch(Exception e){
+			this.statusCode = 0;
 		}
-		urlConnection.disconnect();
 	}
 
-	}
+}
 

@@ -72,9 +72,11 @@ function set(config){
 	// process @@ means json path
 	mountJSON(config);
 	// set
+
 	globalConfig = config;
 	// process ## means lib path
 	intepretJSON(config);
+
 }
 function run(task){
 	var taskConfig;
@@ -96,9 +98,13 @@ function run(task){
 		console.error("task " + task + " is not exist");
 		process.exit(1);
 	}
-
 // prepare
 	if(!taskConfig.env) taskConfig.env = {};
+	taskConfig.env.task = task;
+	taskConfig.env.intepret = function(str){
+		return tmpl(libFile.readString(str), {global: taskConfig.env});
+	};
+
 	libFile.mkdirpSync(taskConfig.target);
 
 	console.log("\x1b[1;32m", "load configs ...", "\x1b[0m");
@@ -343,7 +349,7 @@ function readConfig(nsSubPath, modConfig){
 			config[key] = modConfig[key];
 		}
 	}
-	if(!config.initPriority) config.initPriority = 100;
+	if(!config.initPriority) config.initPriority = 10;
 	if(!config.loadPriority) config.loadPriority = 500;
 	if(!config.srcPriority) config.srcPriority = 500;
 	cache[nsSubPath] = config;

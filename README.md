@@ -16,6 +16,7 @@ Its core function works like advanced m4 language, but based on javascript.
 - Pure nodejs (without any dependencies)
 - Run on all mainstream OS (like Linux, Windows and Mac)
 - Easy to learn (only two grammars)
+- Compatible to almost all frameworks (yes, it is)
 - Easily extendable (you can write your own modules)
 
 ## Install

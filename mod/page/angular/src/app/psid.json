@@ -1,0 +1,7 @@
+{
+		"config": {
+				"filename": "^^=name$$.js",
+				"envlink": "pages",
+				"tpl": "psid.main.js"
+		}
+}

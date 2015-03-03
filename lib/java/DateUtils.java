@@ -14,6 +14,7 @@ public class DateUtils {
 		return dateStr;// 10月03日 23时
 	}
 	public static Date parseDate(String dateString) {
+		jsFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date date = null;
 		try {
 			date = jsFormat.parse(dateString);
@@ -22,13 +23,15 @@ public class DateUtils {
 			e.printStackTrace();
 		}
 		if(date == null) return null;
-		return new Date(date.getTime() + TimeZone.getDefault().getOffset(0));
+		return new Date(date.getTime());
 	}
 	public static Date parseDate(long i) {
+		jsFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return new Date(i);
 	}
 
 	public static String getString(Date date){
+		jsFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		String dateStr = jsFormat.format(date);
 		return dateStr;
 	}
