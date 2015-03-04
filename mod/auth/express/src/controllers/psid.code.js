@@ -74,7 +74,10 @@ module.exports.sendSms = sendSms;
 module.exports.sendSmsMultiple = function(body, fn){
 	if(body.body) body = body.body;
 	async.eachSeries(body.configs, function(config, cb){
-		sendSms(config, cb);
+		sendSms(config, function(err){
+			if(err) {console.log("send sms error "+config.phone);}
+			cb();
+		});
 	}, fn);
 
 }

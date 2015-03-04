@@ -319,7 +319,7 @@ Model.methods.VerifyCode = function(params, fn){
 			fn(null, false);
 			return;
 		}
-		fn(null, true);
+		fn(null, doc);
 	});
 }
 ^^}$$
