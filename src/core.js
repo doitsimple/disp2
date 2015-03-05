@@ -396,7 +396,7 @@ function loadSubPath(loadConfig, taskConfig){
 function fillDir(dir, tdir, dj, env){
 	//		console.log("filldir " +dir);
 	if(!dj.key && !dj.config){
-		console.error(dir + "/psid.json has no key or config");
+		return; // need no speical mechanism
 		process.exit(1);
 	}
 
