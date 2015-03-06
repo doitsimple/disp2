@@ -21,7 +21,7 @@
 <body>
 ^^=bodyContent$$
 ^^if(local.html){$$
-^^=methods.readString(html)$$
+^^=global.intepret(html)$$
 ^^}$$
 <script src="lib/js/jquery.min.js"></script>
 ^^global.jsLibs.forEach(function(jsfile){$$
