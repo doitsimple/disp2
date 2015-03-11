@@ -215,6 +215,15 @@ function update(where, doc, fn){
 		});
 	});
 }
+function updates(where, doc, fn){
+	if(!fn) fn =function(){};
+	if(typeof where == "string" || typeof where == "number")
+		where = {"^^=idField.name$$": where};
+	if(!doc.$set) doc = {
+		$set: doc
+	};
+	Model.update(where, doc, {multi: true}, fn);
+}
 
 
 function upsert(where, doc, fn){
@@ -340,6 +349,7 @@ Model.methods.get = Model.methods.find = get;
 Model.methods.list = Model.methods.gets = gets;
 Model.methods.insert = Model.methods.add = Model.methods.post  = insert;
 Model.methods.update = Model.methods.modify = Model.methods.put = update;
+Model.methods.updates = updates;
 Model.methods.upsert = upsert;
 Model.methods.inserts = Model.methods.posts = Model.methods.adds = inserts;
 Model.methods.inserts = Model.methods.adds = Model.methods.posts = inserts;

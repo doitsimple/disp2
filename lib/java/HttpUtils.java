@@ -29,8 +29,8 @@ System.setProperty("http.keepAlive", "false");
 for long connection
 */
 public class HttpUtils {
-	public static int connectTimeout = 21000;
-	public static int readTimeout = 21000;
+	public static int connectTimeout = 0;
+	public static int readTimeout = 0;
 
 	public static HttpURLConnection createConnection(String urlString)
 		throws KeyManagementException, NoSuchAlgorithmException,

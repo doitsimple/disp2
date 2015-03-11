@@ -21,8 +21,10 @@ module.exports.checkUpdate = function(req, fn){
 			fn(null, {"existUpdate": false, message: "nothing to updated"});
 			return;
 		}
+		console.log(version);
+		console.log(doc.version);
 		if(libString.compareVersion(version, doc.version) < 0)
-			fn(null, {"existUpdate": true});
+			fn(null, {"existUpdate": true, "force": true});
 		else
 			fn(null, {"existUpdate": false});
 	});

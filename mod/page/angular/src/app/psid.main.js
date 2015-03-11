@@ -3,6 +3,16 @@ var rootApp = angular.module('rootApp', [
 ]);
 
 
+^^
+function getParams(route){
+	var str = "";
+	if(!route.params) return str;
+	route.params.forEach(function(param){
+		str+="/:" + param.name;
+	});
+	return str;
+}
+$$
 rootApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
@@ -14,7 +24,7 @@ rootApp.config(['$routeProvider',
       }).
 ^^}$$
 ^^for (var ngRoute in ngRoutes){route = ngRoutes[ngRoute];$$
-      when('^^=route.route$$', {
+      when('^^=route.route+getParams(route)$$', {
         templateUrl: 'html/^^=route.name$$.html',
         controller: '^^=route.name$$Controller',
         access: ^^=route.access$$
