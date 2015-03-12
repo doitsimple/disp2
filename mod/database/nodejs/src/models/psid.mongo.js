@@ -204,7 +204,7 @@ function update(where, doc, fn){
 			}
 		}
 		^^fields.forEach(function(field){$$
-	  if(doc.^^=field.name$$ && doc.^^=field.name$$ != ori_doc.^^=field.name$$)
+	  if(doc.hasOwnProperty("^^=field.name$$") && doc.^^=field.name$$ != ori_doc.^^=field.name$$)
 			ori_doc.^^=field.name$$ = doc.^^=field.name$$;
 		^^})$$
 		ori_doc.save(function(err){
@@ -349,7 +349,7 @@ Model.methods.get = Model.methods.find = get;
 Model.methods.list = Model.methods.gets = gets;
 Model.methods.insert = Model.methods.add = Model.methods.post  = insert;
 Model.methods.update = Model.methods.modify = Model.methods.put = update;
-Model.methods.updates = updates;
+Model.methods.updates = Model.methods.puts = updates;
 Model.methods.upsert = upsert;
 Model.methods.inserts = Model.methods.posts = Model.methods.adds = inserts;
 Model.methods.inserts = Model.methods.adds = Model.methods.posts = inserts;
