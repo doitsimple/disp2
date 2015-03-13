@@ -92,7 +92,7 @@ $$
 //删除一个记录
 - (void)deleteById:(NSString *)ID
 {
-    NSString * sql = @"DELETE FROM ^^=name$$ WHERE ID = ?;";
+    NSString * sql = @"DELETE FROM ^^=name$$ WHERE ^^=idField.name$$ = ?;";
     @synchronized(self){
         BOOL ret = [_database executeUpdate:sql, ID];
         if (ret == NO) {
