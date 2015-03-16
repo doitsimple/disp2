@@ -10,6 +10,7 @@ public class DateUtils {
 	public static SimpleDateFormat jsFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	public static String getAbsoluteString(Date date) {
 		SimpleDateFormat format = new SimpleDateFormat("MM月dd日HH时", Locale.getDefault());
+		if(date == null) return "";
 		String dateStr = format.format(date);
 		return dateStr;// 10月03日 23时
 	}
@@ -32,11 +33,13 @@ public class DateUtils {
 
 	public static String getString(Date date){
 		jsFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		if(date == null) return "";
 		String dateStr = jsFormat.format(date);
 		return dateStr;
 	}
 	public static String getString(Date date, String formatStr){
 		SimpleDateFormat format = new SimpleDateFormat(formatStr, Locale.getDefault());
+		if(date == null) return "";
 		String dateString = format.format(date);
 		return dateString;
 
