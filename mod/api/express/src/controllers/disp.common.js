@@ -15,7 +15,7 @@ var uploadPath = require("../constant").uploadPath;
 ^^	
 for (var apiname in global.apis){
 	var api = global.apis[apiname];
-	if(!api.controller){
+	if(!api.controller && !api.multipart){
 $$
 module.exports.^^=apiname$$ = function(req, fn){
 	^^=methods.intepret("psid.assets/" + apiname +".js")$$
