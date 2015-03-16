@@ -1,0 +1,33 @@
+{
+		"mod": {
+				"api": true,
+				"server": true
+		},
+		"ns": "express",
+		"env": {
+				"port": 3000,
+				"apis":  {   
+						"signin": {
+								"method": "post",
+								"text": "登陆",
+								"isSignin": true,
+								"hint": [
+										"正确，返回id, token存入用户表",
+										"重新写token"
+								],
+								"errorCode": {
+										"1": "用户名错误",
+										"2": "密码错误"
+								},
+								"fields": [
+										{
+												"name": "username"
+										},
+										{
+												"name": "password"
+										}
+								]
+						}
+				}
+		}
+}

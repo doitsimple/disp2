@@ -101,7 +101,7 @@ function run(task){
 // prepare
 	if(!taskConfig.env) taskConfig.env = {};
 	taskConfig.env.task = task;
-	taskConfig.env.intepret = function(str){
+	taskConfig.env.intepret = methods.intepret = function(str){
 		return tmpl(libFile.readString(str), {global: taskConfig.env});
 	};
 
@@ -602,6 +602,7 @@ function walk(dir, tdir, env){
 
 
 module.exports.methods = methods;
+module.exports.intepretJSON = intepretJSON;
 module.exports.set = set;
 module.exports.run = run;
 module.exports.tmpl = tmpl;
