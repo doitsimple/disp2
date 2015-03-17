@@ -16,6 +16,18 @@ var router = express.Router();
  var api = global.apis[key];
  var authStr = "";
  if(api.auth) authStr = "auth.midware, ";
+$$
+
+ ^^console.log(api);
+	 if(api.method.toLowerCase() == "rest"){
+	 $$
+ router.route("/^^=api.name$$/:id").get(^^=authStr$$sendRes(common.^^=api.name+"GET"$$));
+ router.route("/^^=api.name$$").post(^^=authStr$$sendRes(common.^^=api.name+"POST"$$));
+ router.route("/^^=api.name$$/:id").put(^^=authStr$$sendRes(common.^^=api.name+"PUT"$$));
+ router.route("/^^=api.name$$/:id").delete(^^=authStr$$sendRes(common.^^=api.name+"DELETE"$$));
+ ^^continue;}$$
+
+^^
  var ctrlStr;
  if(!api.controller)
 	 ctrlStr = "sendRes(common." + api.name + ")";

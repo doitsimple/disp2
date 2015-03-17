@@ -26,7 +26,8 @@
 										{
 												"name": "password"
 										}
-								]
+								],
+								"auth": true
 						}
 				}
 		}
