@@ -1,0 +1,10 @@
+{
+		"mod": {
+				"server": true
+		},
+		"ns": "express",
+		"env": {
+				"port": 3000,
+                "staticPath": "../6-angularjs"
+		}
+}

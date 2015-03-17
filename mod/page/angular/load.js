@@ -40,6 +40,7 @@ module.exports = function(env){
 			if(!subpage.controller) subpage.controller = subname;
 			if(!subpage.template) subpage.template = subname;
 			var tplFile = page.assetDir + "/" + subpage.template + ".html";
+            libFile.mkdirp("html");
 			if(fs.existsSync(tplFile)){
 				fs.writeFileSync("html/" + subname + ".html", env.intepret(tplFile));
 			}
