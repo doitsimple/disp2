@@ -15,6 +15,6 @@
 	ac.^^=userSchema.idField.name$$ = userid;
 	ac.^^=userSchema.usernameField.name$$ = username;
 	ac.^^=tokenSchema.tokenField.name$$ = token;
-	[[^^=userSchema.name$$Utils sharedDatabase] save, ac];
+	[[^^=userSchema.name$$Utils sharedDatabase] save: ac];
 }
 @end
