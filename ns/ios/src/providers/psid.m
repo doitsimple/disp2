@@ -178,7 +178,7 @@ NSString * sql = @"SELECT * FROM ^^=name$$;";
         
 		[muString appendString:[string substringFromIndex:2]];
 		
-		NSString * updateSql = [NSString stringWithFormat:@"%@ WHERE present = 1' ;", muString];
+		NSString * updateSql = [NSString stringWithFormat:@"%@ WHERE present = 1 ;", muString];
 		@synchronized(self){
 			BOOL res = [_database executeUpdate:updateSql];
 			if (!res) {
