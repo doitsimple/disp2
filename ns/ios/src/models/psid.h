@@ -10,5 +10,4 @@
 @property (nonatomic , copy) NSString * ^^=f.name$$; //^^=f.text$$
 
 ^^})$$
-
 @end

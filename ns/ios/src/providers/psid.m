@@ -240,6 +240,15 @@ NSString * sql = @"SELECT * FROM ^^=name$$;";
 	}
 }
 ^^}$$
+^^if(!isUserSchema){$$
+- (void)upsertDictArray:(NSArray *)dictArray{
+	for (NSDictionary * dict in dictArray) {
+		^^=name$$Model *item = [[^^=name$$Model alloc] init];
+		[item setValuesForKeysWithDictionary:dict];
+		[self upsertById: item.^^=idField.name$$ ^^=name$$Model:item];
+	}
+}
+^^}$$
 //单例
 + (^^=name$$Utils *)sharedDatabase
 {

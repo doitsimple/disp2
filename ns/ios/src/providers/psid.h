@@ -31,6 +31,6 @@
 - (^^=name$$Model *)getById:(NSString *)^^=idField.name$$;
 //更新指定数据
 - (void)upsertById:(NSString *)^^=idField.name$$ ^^=name$$Model:(^^=name$$Model *)updateItem;
+- (void)upsertDicArray:(NSArray *)items;
 ^^}$$
-- (void)upsertArray:(NSArray *)items;
 @end
