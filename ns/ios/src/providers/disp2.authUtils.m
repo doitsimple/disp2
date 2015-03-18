@@ -11,5 +11,10 @@
 	return ac.^^=tokenSchema.tokenField.name$$;
 };
 + (void) save: (NSString *)userid username:(NSString *)username token:(NSString *)token{
+	^^=userSchema.name$$Model * ac = [[^^=userSchema.name$$Model alloc] init];
+	ac.^^=userSchema.idField.name$$ = userid;
+	ac.^^=userSchema.usernameField.name$$ = username;
+	ac.^^=tokenSchema.tokenField.name$$ = token;
+	[[^^=userSchema.name$$Utils sharedDatabase] save, ac];
 }
 @end

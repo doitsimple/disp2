@@ -189,7 +189,7 @@ NSString * sql = @"SELECT * FROM ^^=name$$;";
 		}
 	}
 }
-^^}$$
+^^}else{$$
 //查找指定对象
 - (^^=name$$Model *)getById:(NSString *)ID
 {
@@ -239,7 +239,7 @@ NSString * sql = @"SELECT * FROM ^^=name$$;";
 		}
 	}
 }
-
+^^}$$
 //单例
 + (^^=name$$Utils *)sharedDatabase
 {

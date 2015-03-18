@@ -25,10 +25,12 @@
 - (^^=name$$Model *)get;
 //存入当前用户
 - (void)save:(^^=name$$Model *)updateItem;
-^^}$$
+^^}else{$$
+
 //查找指定对象
 - (^^=name$$Model *)getById:(NSString *)^^=idField.name$$;
 //更新指定数据
 - (void)upsertById:(NSString *)^^=idField.name$$ ^^=name$$Model:(^^=name$$Model *)updateItem;
+^^}$$
 - (void)upsertArray:(NSArray *)items;
 @end
