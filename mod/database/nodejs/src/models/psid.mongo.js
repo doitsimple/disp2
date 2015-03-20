@@ -106,8 +106,15 @@ var hat = require("../lib/random").hat;
 ^^}$$
 
 var Model = mongoose.model('^^=name$$', ^^=ucfirst(name)$$Schema);
+Model.methods = {};
 ^^if(autoIncField){$$
 Model.autoinc = AutoIncModel;
+Model.methods.getNext = function (fn){
+	Model.autoinc.findOne(function(err, doc){
+		if(err){ fn(err); return;}
+		fn(null, doc.next);
+	});
+}
 ^^}$$
 
 function get(where, fields, fn){
@@ -302,7 +309,7 @@ function filter(doc){
 	return json;
 }
 
-Model.methods = {};
+
 
 ^^if(codeField){
 if(!idField || !timeField){
@@ -357,6 +364,7 @@ Model.methods.delete = Model.methods.remove = remove;
 Model.methods.drop = drop;
 Model.methods.populate = populate;
 Model.methods.filter = filter;
+
 Model.method = Model.methods; //for historical version
 // Export the model
 module.exports = Model;

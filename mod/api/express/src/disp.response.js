@@ -13,11 +13,21 @@ module.exports.sendRes = function(func){
           error: err,
           result: result
         };
-			else if(err)
-				json = {
-					error: err,
-          result: result
-				};
+			else if(err){
+/*
+				if(typeof err == "string")
+					json = {
+						error: err,
+						result: result,
+						message: err
+					}
+				else
+*/
+					json = {
+						error: err,
+						result: result
+					};
+			}
 			else
 				json = result;
 /*^^if(global.log){$$*/

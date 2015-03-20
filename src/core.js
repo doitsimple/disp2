@@ -54,7 +54,7 @@ function set(config){
 	}
 	//add default sys config
 	var defaultSys;
-	if(path.resolve(config.root) == path.resolve("."))
+	if(path.resolve(config.root) == path.resolve(".."))
 		defaultSys = {
 			libPaths: ["../lib"],
 			nsPaths: ["../ns"],
@@ -300,9 +300,10 @@ function intepretJSON(config){
 function readNsDeps(ns, taskConfig){
 	if(nsCache[ns]) return;
 	nsCache[ns] = true;
+
   globalConfig.sys.nsPaths.forEach(function(nsPath){
 		var nsSubPath = nsPath + "/" + ns;
-		if(fs.existsSync(nsSubPath)){
+		if(fs.existsSync(nsSubPath)){			
 			var config = readConfig(nsSubPath);
 			if(config.dep){
 				libObject.each(config.dep, function(dep){
@@ -337,6 +338,7 @@ function readDeps(taskConfig){
 }
 function readConfig(nsSubPath, modConfig){
 	nsSubPath = path.resolve(nsSubPath);
+
 	if(cache.hasOwnProperty(nsSubPath)) return null;
 	var config = {};
   if(fs.existsSync(nsSubPath + "/config.json")){

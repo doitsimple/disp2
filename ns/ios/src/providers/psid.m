@@ -241,7 +241,7 @@ NSString * sql = @"SELECT * FROM ^^=name$$;";
 }
 ^^}$$
 ^^if(!isUserSchema){$$
-- (void)upsertDictArray:(NSArray *)dictArray{
+- (void)upsertDicArray:(NSArray *)dictArray{
 	for (NSDictionary * dict in dictArray) {
 		^^=name$$Model *item = [[^^=name$$Model alloc] init];
 		[item setValuesForKeysWithDictionary:dict];
