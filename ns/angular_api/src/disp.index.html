@@ -1,0 +1,90 @@
+^^
+var navbar = global.navbar;
+$$
+<!DOCTYPE html>
+<html ng-app="rootApp">
+<head>
+<title>^^=global.title || global.name$$</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <!-- Bootstrap core CSS -->
+    <link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/assets/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/assets/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+
+    <link href="assets/css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+      <!-- Static navbar -->
+      <div class="navbar navbar-default navbar-static-top" role="navigation" ng-controller="navbarController">
+        <div class="container">
+          <div class="navbar-header">
+            <button id="toggle-menu" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/">
+							^^=global.brand || global.name$$
+						</a>
+          </div>
+          <div id="menu" class="navbar-collapse collapse">
+            <!-- Left nav -->
+            <ul class="nav navbar-nav">
+							<li>
+                <a ng-click="toggle()">接口列表</a>
+                <ul class="dropdown-menu">
+									^^for( var key in global.apis){var api = global.apis[key];$$
+									^^if(api.isSignup || api.isSignin){ continue; }$$
+                  <li><a ng-click="toggle()" href="#/^^=api.name$$">^^=api.text$$</a></li>
+									^^}$$
+                </ul>
+              </li>
+						</ul>
+            <!-- Right nav -->
+            <ul class="nav navbar-nav navbar-right">
+							^^if(!global.secure){$$
+							<li ng-class="{active: isActive('/^^=global.signupApi.name$$')}"><a href="#/^^=global.signupApi.name$$" >注册</a></li>
+							^^}$$
+							^^if(global.signupSendCodeApi){$$
+							<li ng-class="{active: isActive('/^^=global.signupSendCodeApi.name$$')}"><a href="#/^^=global.signupSendCodeApi.name$$" >注册发送短信</a></li>
+							^^}$$
+							<li ng-hide="isSignedin()" ng-class="{active: isActive('/^^=global.signinApi.name$$')}"><a href="#/^^=global.signinApi.name$$" >登录</a></li>
+              <li ng-show="isSignedin()"><a href ng-click="signout()">登出</a></li>
+						</ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div>
+    <div class="container main">
+			<div ng-view></div>
+		</div>
+
+
+<!-- Basic -->
+<script src="libs/js/jquery.js"></script>
+<script src="libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="libs/js/angular.min.js"></script>
+<script src="libs/js/angular-route.min.js"></script>
+<script src="libs/js/angular-cookies.min.js"></script>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/controllers/homeController.js"></script>
+<script src="assets/js/controllers/navbarController.js"></script>
+^^for (var key in global.apis){var apiname = global.apis[key].name;$$
+<script src="assets/js/controllers/^^=apiname$$Controller.js"></script>
+^^}$$
+<script src="assets/js/directives/fileModel.js"></script>
+<script src="assets/js/services/authService.js"></script>
+<script src="assets/js/services/requestService.js"></script>
+
+</body>
+</html>

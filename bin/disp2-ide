@@ -8,11 +8,12 @@ var libIde = require("../src/ide");
 var port = 6174;
 var idePath = __dirname + "/../ide/";
 
-if(!fs.existsSync(workspace))
-	fs.mkdirSync(workspace);
 
 var global = {};
 global.workspace = __dirname + "/../workspace/";
+if(!fs.existsSync(global.workspace))
+	fs.mkdirSync(global.workspace);
+
 http.createServer(function(req, res) {
 	console.log(req.url);
 	var filePath;
@@ -28,13 +29,15 @@ http.createServer(function(req, res) {
 		receiveFile(filePath, req, res);
 	}else if(req.url.match(/^\/gapi\/[^\/]+$/)){
 //global api
-		var matches = req.url.match(/^\/api\/([^\/]+)/);
+		var matches = req.url.match(/^\/gapi\/([^\/]+)/);
 		var api = matches[1];
 		switch(api){
 			case "setenv":
 				break;
       case "listproject":
-				res.end(JSON.stringify(libIde.listProject(global.workspace)));
+				libIde.listProject(global.workspace, function(err, list){
+					res.end(JSON.stringify(list));
+				});
 				break;
 			default:
 				res.end(0);
@@ -42,7 +45,7 @@ http.createServer(function(req, res) {
 	}else if(req.url.match(/^\/papi\/[^\/]+\/\S+/)){
 //project api
 		console.log("papi");
-		var matches = req.url.match(/^\/api\/([^\/]+)\/(\S+)/);
+		var matches = req.url.match(/^\/papi\/([^\/]+)\/(\S+)/);
 		var api = matches[1];
 		var proj = matches[2];
 		switch(api){
@@ -60,7 +63,8 @@ http.createServer(function(req, res) {
 				break;
 			}
 			case "readproject":{
-				var rp = path.join(workspace, proj, ".result.json");
+				var rp = path.join(global.workspace, proj, ".result.json");
+				
 				console.log(rp);
 				sendFile(rp, res);					
 				break;
@@ -73,6 +77,7 @@ http.createServer(function(req, res) {
 		}
 		
 	}else{
+		console.log("static");
 		if(req.url == "/") req.url = "/index.html";
 		filePath = path.join(idePath, req.url);
 		sendFile(filePath, res);
