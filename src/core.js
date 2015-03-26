@@ -15,8 +15,8 @@ var globalConfig;
 var cache = {};
 var nsCache = {};
 var tmplCache = {};
-var ignoreFileListCache = {};
-var rtn = {files: {}, envs: {}};
+var generateFileListCache = {};
+var rtn = {rawFiles: {}, genFiles: {}, envs: {}};
 /* 
 !!! two dim array is not allowed in config
 priority 
@@ -203,18 +203,18 @@ function tmpl(config, data){
 	}
 }
 function loadCache(dirpath){
-	libObject.clear(ignoreFileListCache);
+	libObject.clear(generateFileListCache);
 	if(fs.existsSync(dirpath + "/.result.json")){
-		ignoreFileListCache = libFile.readJSON(dirpath + "/.result.json");
+		generateFileListCache = libFile.readJSON(dirpath + "/.result.json");
 	}else{
-		ignoreFileListCache = {};
+		generateFileListCache = {};
 	}
-	ignoreFileListCache.root = dirpath;
+	generateFileListCache.root = dirpath;
 }
 function isGenFile(file){
-	if(!ignoreFileListCache.files) return false;
-	var rpath = path.relative(ignoreFileListCache.root, file);
-	return ignoreFileListCache.files[rpath];
+	if(!generateFileListCache.genFiles) return false;
+	var rpath = path.relative(generateFileListCache.root, file);
+	return generateFileListCache.genFiles[rpath];
 }
 
 function addParams(config, defaultConfig){
@@ -431,14 +431,14 @@ function fillDir(dir, tdir, dj, env){
 			if(config.parse)
 				config.files.forEach(function(f){
 					var t = tdir + "/" + path.basename(f);
-					rtn.files[path.relative(".", t)] = {src: path.resolve(f)};
+					rtn.genFiles[path.relative(".", t)] = {src: path.resolve(f)};
 					fs.writeFileSync(t, tmpl({key: f}, {global: env, dir: path.basename(tdir)}));
 				});
 			else
 				config.files.forEach(function(f){
 					var t = tdir + "/" + path.basename(f);
 					if(f != t){
-						rtn.files[path.relative(".", t)] = {src: path.resolve(f)};
+						rtn.genFiles[path.relative(".", t)] = {src: path.resolve(f)};
 						libFile.copySync(f, t);
 					}
 				});				
@@ -498,7 +498,7 @@ function fillDir(dir, tdir, dj, env){
 				if(config.filename){
 					var filename = tmpl({str: config.filename}, subenv);
 					var t = tdir + "/" + filename;
-					rtn.files[path.relative(".", t)] = {tpl: path.resolve(config.tpl)};
+					rtn.genFiles[path.relative(".", t)] = {tpl: path.resolve(config.tpl)};
 					libFile.mkdirpSync(path.dirname(t));
 					fs.writeFileSync(t, tmpl({key: config.tpl}, subenv));
 				}else if(config.envname){
@@ -571,33 +571,37 @@ function walk(dir, tdir, env){
 		// if begin with disp, format the file
 		if(f.match(/^disp\./)){
 			t = tdir + '/' + f.replace(/^disp./, "");
-			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
+			rtn.genFiles[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			fs.writeFileSync(t, tmpl({key: p}, {global: env}));
 		}
 		else if(f.match(/\.disp$/)){
 			t = tdir + '/' + f.replace(/\.disp$/, "");
-			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
+			rtn.genFiles[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			fs.writeFileSync(t, tmpl({key: p}, {global: env}));
 		}
 		else if(f.match(/^disp2\./)){
 			t = tdir + '/' + f.replace(/^disp2./, "");
-			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
+			rtn.genFiles[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			fs.writeFileSync(t, tmpl({key: p}, env));
 		}
 		else if(f.match(/\.disp2$/)){
 			t = tdir + '/' + f.replace(/\.disp$/, "");
-			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
+			rtn.genFiles[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			fs.writeFileSync(t, tmpl({key: p}, env));
 		}
 		else if(dir != tdir){
 			t = tdir + '/' + f;
-			rtn.files[path.relative(".", t)] = {src: path.resolve(p)};
+			rtn.genFiles[path.relative(".", t)] = {src: path.resolve(p)};
 			libFile.mkdirpSync(path.dirname(t));
 			libFile.copySync(p, t);
+		}else{
+			var rp = path.relative(".", p);
+			if(rp != ".result.json" && rp != ".project.json")
+				rtn.rawFiles[rp] = {};
 		}
 	});
 };

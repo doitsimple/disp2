@@ -1,0 +1,110 @@
+#!/usr/bin/env node
+var http = require('http');
+var fs = require('fs');
+var path = require('path');
+var libFile = require("../lib/nodejs/file");
+var libIde = require("../src/ide");
+
+var port = 6174;
+var idePath = __dirname + "/../ide/";
+
+if(!fs.existsSync(workspace))
+	fs.mkdirSync(workspace);
+
+var global = {};
+global.workspace = __dirname + "/../workspace/";
+http.createServer(function(req, res) {
+	console.log(req.url);
+	var filePath;
+	if(req.url.match(/^\/read\/(\S+)/)){
+		console.log("read");
+		filePath = path.join(global.workspace + decodeURIComponent(req.url.match(/^\/read\/(\S+)/)[1]));
+		console.log(filePath);
+		sendFile(filePath, res);
+	}else if(req.url.match(/^\/write\/\S+/)){
+		console.log("write");
+		filePath = path.join(global.workspace + decodeURIComponent(req.url.match(/^\/write\/(\S+)/)[1]));
+		console.log(filePath);
+		receiveFile(filePath, req, res);
+	}else if(req.url.match(/^\/gapi\/[^\/]+$/)){
+//global api
+		var matches = req.url.match(/^\/api\/([^\/]+)/);
+		var api = matches[1];
+		switch(api){
+			case "setenv":
+				break;
+      case "listproject":
+				res.end(JSON.stringify(libIde.listProject(global.workspace)));
+				break;
+			default:
+				res.end(0);
+		}
+	}else if(req.url.match(/^\/papi\/[^\/]+\/\S+/)){
+//project api
+		console.log("papi");
+		var matches = req.url.match(/^\/api\/([^\/]+)\/(\S+)/);
+		var api = matches[1];
+		var proj = matches[2];
+		switch(api){
+			case "readdir":
+			case "updatedir":{
+				if(!global.list || api == "updatedir"){
+					libFile.readdirParallel(workspace + "/" +proj, function(err, list){
+						if(err) res.end(err);
+						else {
+							global.list = list;
+							res.end(JSON.stringify(list));
+						}
+					});
+				}
+				break;
+			}
+			case "readproject":{
+				var rp = path.join(workspace, proj, ".result.json");
+				console.log(rp);
+				sendFile(rp, res);					
+				break;
+			}
+			case "gen":{
+				break;
+			}
+			default: 
+				res.end(0);
+		}
+		
+	}else{
+		if(req.url == "/") req.url = "/index.html";
+		filePath = path.join(idePath, req.url);
+		sendFile(filePath, res);
+	}
+}).listen(port, function(err){
+	if(err) console.log(err);
+	else console.log("listen to port "+port); 
+});
+function receiveFile(filePath, req, res){
+	var tmpFilePath = filePath + ".tmp";
+	var stream = fs.createWriteStream(tmpFilePath);
+	stream.on('error', function() {
+    res.writeHead(404);
+    res.end();
+  });
+	stream.on('finish', function() {
+		libFile.mvSync(tmpFilePath, filePath);
+		res.end("1");
+  });
+	req.pipe(stream);
+}
+function sendFile(filePath, res){
+	if(fs.existsSync(filePath)){
+		var stream = fs.createReadStream(filePath);
+		stream.on('error', function() {
+			res.writeHead(404);
+			res.end();
+		});
+		stream.pipe(res);
+	}
+	else{
+		res.writeHead(404);
+    res.end();
+	}
+}
