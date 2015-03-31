@@ -1,0 +1,16 @@
+<div id="project" class="panel panel-default">
+	<div class="name"><a class="btn btn-raw">Project Manager</a></div>
+	<div class="holder"><a class="btn btn-default">Create Project</a></div>
+	<div><a ng-click="list()" class="btn btn-default">Existing Projects</a></div>
+</div>
+<div class="ng-include inline" src="template"></div>
+<script type="text/ng-template" id="projectList">
+  <div class="btng btng-default info">
+    <div ng-repeat="row in data">
+			<a href="#/project/{{row.dir}}">
+      {{row.dir}}
+			</a>
+		</div>
+	</div>
+</script>
+

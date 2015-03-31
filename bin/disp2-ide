@@ -4,13 +4,13 @@ var fs = require('fs');
 var path = require('path');
 var libFile = require("../lib/nodejs/file");
 var libIde = require("../src/ide");
-
+var cp = require("child_process");
 var port = 6174;
-var idePath = __dirname + "/../ide/";
-
+var idePath = path.resolve(__dirname + "/../ide/");
+var dispPath = path.resolve(__dirname + "/../bin/disp2");
 
 var global = {};
-global.workspace = __dirname + "/../workspace/";
+global.workspace = path.resolve(__dirname + "/../workspace/");
 if(!fs.existsSync(global.workspace))
 	fs.mkdirSync(global.workspace);
 
@@ -19,12 +19,12 @@ http.createServer(function(req, res) {
 	var filePath;
 	if(req.url.match(/^\/read\/(\S+)/)){
 		console.log("read");
-		filePath = path.join(global.workspace + decodeURIComponent(req.url.match(/^\/read\/(\S+)/)[1]));
+		filePath = global.workspace + "/" + decodeURIComponent(req.url.match(/^\/read\/(\S+)/)[1]);
 		console.log(filePath);
 		sendFile(filePath, res);
 	}else if(req.url.match(/^\/write\/\S+/)){
 		console.log("write");
-		filePath = path.join(global.workspace + decodeURIComponent(req.url.match(/^\/write\/(\S+)/)[1]));
+		filePath = global.workspace + "/" + decodeURIComponent(req.url.match(/^\/write\/(\S+)/)[1]);
 		console.log(filePath);
 		receiveFile(filePath, req, res);
 	}else if(req.url.match(/^\/gapi\/[^\/]+$/)){
@@ -40,7 +40,7 @@ http.createServer(function(req, res) {
 				});
 				break;
 			default:
-				res.end(0);
+				res.end("0");
 		}
 	}else if(req.url.match(/^\/papi\/[^\/]+\/\S+/)){
 //project api
@@ -62,18 +62,27 @@ http.createServer(function(req, res) {
 				}
 				break;
 			}
-			case "readproject":{
+			case "readlist":{
 				var rp = path.join(global.workspace, proj, ".result.json");
-				
-				console.log(rp);
-				sendFile(rp, res);					
+				if(!fs.existsSync(rp)){
+					gen(path.join(global.workspace, proj), function(err){
+						if(err) {res.end("0"); return;}
+						sendFile(rp, res);
+					});
+				}else{
+					sendFile(rp, res);
+				}
 				break;
 			}
 			case "gen":{
+				gen(path.join(global.workspace, proj), function(err){
+					if(err) res.end("0");
+					else res.end("1");
+				});
 				break;
 			}
 			default: 
-				res.end(0);
+				res.end("0");
 		}
 		
 	}else{
@@ -86,12 +95,19 @@ http.createServer(function(req, res) {
 	if(err) console.log(err);
 	else console.log("listen to port "+port); 
 });
+function gen(path, fn){
+	cp.exec("node " + dispPath, {cwd: path}, function(err, stdout, stderr){
+		console.log(stdout);
+		console.log(stderr);
+		fn(err);
+	});
+}
 function receiveFile(filePath, req, res){
 	var tmpFilePath = filePath + ".tmp";
 	var stream = fs.createWriteStream(tmpFilePath);
 	stream.on('error', function() {
     res.writeHead(404);
-    res.end();
+    res.end("0");
   });
 	stream.on('finish', function() {
 		libFile.mvSync(tmpFilePath, filePath);
@@ -104,12 +120,12 @@ function sendFile(filePath, res){
 		var stream = fs.createReadStream(filePath);
 		stream.on('error', function() {
 			res.writeHead(404);
-			res.end();
+			res.end("0");
 		});
 		stream.pipe(res);
 	}
 	else{
 		res.writeHead(404);
-    res.end();
+    res.end("0");
 	}
 }

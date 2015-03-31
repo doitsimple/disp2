@@ -40,9 +40,15 @@ module.exports = function(env){
 			if(!subpage.controller) subpage.controller = subname;
 			if(!subpage.template) subpage.template = subname;
 			var tplFile = page.assetDir + "/" + subpage.template + ".html";
-            libFile.mkdirp("html");
+      libFile.mkdirp("html");
 			if(fs.existsSync(tplFile)){
 				fs.writeFileSync("html/" + subname + ".html", env.intepret(tplFile));
+			}
+			var cssFile = page.assetDir + "/" + subpage.template + ".css";
+      libFile.mkdirp("css");
+			if(fs.existsSync(cssFile)){
+				fs.writeFileSync("css/" + subname + ".css", env.intepret(cssFile));
+				page.cssLibs.push("css/" + subname + ".css");
 			}
 			var ctrlFile = page.assetDir + "/" + subpage.controller + ".js";
 			if(fs.existsSync(ctrlFile)){

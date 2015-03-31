@@ -1,0 +1,44 @@
+{
+    "ns": [
+        "angular"
+    ],
+    "mod": {
+        "page": true
+    },
+    "env": {
+        "pages": {
+            "index": {
+								"jsLib": [
+										"bower_components/jquery-ui/jquery-ui.min.js",
+										"bower_components/ace-builds/src-noconflict/ace.js"
+								],
+								"cssLib": [
+										"bower_components/jquery-ui/themes/cupertino/jquery-ui.min.css",
+										
+										"css/global.css"
+								],
+                "title": "example",
+								"ngRoutes": {
+                    "workspace": {
+                        "isHome": true,
+                        "deps": [
+                            "API"
+                        ]
+                    },
+										"project": {
+												"params": [
+														{
+																"name": "project"
+														}
+												],
+                        "deps": [
+                            "reqService",
+														"$routeParams",
+														"API"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+<!--<ul id="folder" class="tree tree-default">
+	<li>abc</li>
+	<li>abc</li>
+	<li>abd
+		<span ng-click="toggle()">toggle</span>
+		<ul class="collapse">
+			<li>abc</li>
+			<li>abc</li>
+		</ul>
+	</li>
+</ul>
+-->
+<div style="text-align:left;display:inline-block;" 
+		 data-angular-treeview="true"
+		 data-tree-id="filetreeid"
+		 data-tree-model="filetree"
+		 data-node-id="id"
+		 data-node-label="name"
+		 data-node-children="children" >
+</div>
+<div class="editorpanel">
+<div style="display:inline-block;margin:10px 0 30px 0; padding:10px; border-radius:5px; font:12px Tahoma;">
+  <span><b>filename</b> : {{filetreeid.currentNode.name}}</span>
+</div>
+<div id="editorarea" class="editorarea">
+</div>
+</div>
