@@ -5,7 +5,7 @@
 		},
 		"env":{
 				"mongo": {
-						"host": "localhost",
+						"host": "192.168.1.111",
 						"port": 27017,
 						"db": "test"
 				},

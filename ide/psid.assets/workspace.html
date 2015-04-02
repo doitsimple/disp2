@@ -1,6 +1,6 @@
 <div id="project" class="panel panel-default">
-	<div class="name"><a class="btn btn-raw">Project Manager</a></div>
-	<div class="holder"><a class="btn btn-default">Create Project</a></div>
+	<div class="name">Project Manager</div>
+	<div class="holder"><a ng-click="new()" class="btn btn-default">Create Project</a></div>
 	<div><a ng-click="list()" class="btn btn-default">Existing Projects</a></div>
 </div>
 <div class="ng-include inline" src="template"></div>
@@ -11,6 +11,41 @@
       {{row.dir}}
 			</a>
 		</div>
+	</div>
+</script>
+<script type="text/ng-template" id="newproject">
+	<div class="panel panel-default">
+		<label for="kit">Select a kit</label>
+		<select name="kit" id="kit">
+			<option>FBD</option>
+		</select>
+		<a ng-click="next()" class="btn btn-default">Done</a>
+	</div>
+</script>
+<script type="text/ng-template" id="database">
+	<div class="panel panel-default">
+		<label for="engine">Add an engine</label>
+		<select name="engine" id="engine">
+			<option>mongo</option>
+			<option>mysql</option>
+		</select>
+		<p></p>
+		<label for="host">host</label>
+		<input name="host" id="host">
+		<p></p>
+		<label for="host">port</label>
+		<input name="host" id="host">
+		<p></p>
+		<label for="host">username</label>
+		<input name="host" id="host">
+		<p></p>
+		<label for="host">password</label>
+		<input name="host" id="host">
+		<p></p>
+		<label for="host">database</label>
+		<input name="host" id="host">
+		<p></p>
+		<a ng-click="add()" class="btn btn-default">Add</a>
 	</div>
 </script>
 

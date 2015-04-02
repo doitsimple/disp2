@@ -122,14 +122,13 @@ function get(where, fields, fn){
 		where = {^^=idField.name$$: where};
 	Model.findOne(where, fields, fn);
 }
-
 function gets(criteria, fields, fn){
-	var sort, limit, skip, lt, gt;
+	var sort, limit, skip, lt, gt, page;
 	if(criteria.sort){
 		sort = criteria.sort;
 		delete criteria.sort;
 	}
-	if(criteria.skip){
+	if(criteria.hasOwnProperty(skip)){
 		skip = criteria.skip;
 		delete criteria.skip;
 	}
