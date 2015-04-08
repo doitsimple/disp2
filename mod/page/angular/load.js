@@ -16,7 +16,7 @@ module.exports = function(env){
 		}
 
 		page.htmlProperty += ' ng-app="rootApp"';
-		page.bodyContent += '<div ng-controller="navbarController">' + nav  + '</div><div ng-view></div>';
+		page.bodyContent += '<div ng-controller="navbarController">' + nav  + '</div><div ng-view id=page-wrapper></div></div>';
 
 		if(!page.assetDir) page.assetDir = "psid.assets";
 		page.jsLibs.push("lib/js/angular.min.js");
