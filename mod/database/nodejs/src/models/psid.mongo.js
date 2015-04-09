@@ -128,7 +128,7 @@ function gets(criteria, fields, fn){
 		sort = criteria.sort;
 		delete criteria.sort;
 	}
-	if(criteria.hasOwnProperty(skip)){
+	if(criteria.hasOwnProperty("skip")){
 		skip = criteria.skip;
 		delete criteria.skip;
 	}

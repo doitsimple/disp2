@@ -18,7 +18,7 @@ var router = express.Router();
  if(api.auth) authStr = "auth.midware, ";
 $$
 
- ^^console.log(api);
+ ^^
 	 if(api.method.toLowerCase() == "rest"){
 	 $$
  router.route("/^^=api.name$$/:id").get(^^=authStr$$sendRes(common.^^=api.name+"GET"$$));
