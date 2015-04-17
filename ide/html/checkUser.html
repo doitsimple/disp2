@@ -1,0 +1,33 @@
+<div class="row">
+	<div class="col-sm-3 text-center">
+		<div>本页查询</div>
+		<input ng-model="search.realname" placeholder="查询姓名"/>
+		<input ng-model="search.$" placeholder="查询关键字"/>
+	</div>
+	<div class="col-sm-9 col-md-6">
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="row in filtered = (data | filter: search)">
+				<div class="row">
+					<a href="#/checkUserDetails/{{row._id}}">
+					<div class="col-xs-3 text-center">
+					</div>
+					<div class="col-xs-9">
+						<p>姓名: {{row.realname}}</p>
+						<p>电话: {{row.phone}}</p>
+						<p>ID: {{row._id}}</p>
+					</div>
+					</a>
+				</div>
+			</li>
+		</ul>
+	</div>
+<div/>
+
+
+<p>
+  total User: {{filtered.length}}<br />
+</p>
+
+
+
+
