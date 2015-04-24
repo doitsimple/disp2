@@ -166,6 +166,66 @@ function gets(criteria, fields, fn){
 		}
 	});
 }
+
+function insertpro(obj, fn){
+	if(libObject.isArray(doc)){
+		async.eachSeries(array, insert, function(err){
+			if(err) fn(err);
+			else fn(null, {success: true});
+		});
+		return;
+	}
+  var model = new Model(obj);
+  model.save(function(err, doc) {
+    if (err)
+			fn(err);
+		else{
+			fn(null, {insertId: doc._id});
+		}
+  });
+}
+function selectpro(criteria, fn){
+	var eq, fields;
+	if(criteria.$fields){
+		fields = criteria.$fields;
+	}
+	if(criteria.$eq){
+		eq = criteria.eq;
+	}
+	var cobj = Model.find(eq, fields);
+	var obj = Model.find(eq, fields);
+	if(criteria.$match)
+		for(var key in criteria.$match){
+			cobj = cobj.where(key).match(new RegExp(criteria.$match[key]));
+			obj = obj.where(key).match(new RegExp(criteria.$match[key]));
+		}
+^^["cmp", "lt", "gt", "gte", "lt", "lte", "ne"].forEach(function(op){$$
+	if(criteria.$^^=op$$)
+		for(var key in criteria.$^^=op$$){
+			cobj = cobj.where(key).^^=op$$(criteria.$^^=op$$[key]);
+			obj = obj.where(key).^^=op$$(criteria.$^^=op$$[key]);
+		}
+^^})$$
+	cobj.count(function(err, count){
+		if (err) {fn(err); return;}
+^^["sort", "skip", "limit"].forEach(function(op){$$
+		if(criteria.$^^=op$$){
+			obj = obj.^^=op$$(criteria.$^^=op$$);
+		}
+^^})$$
+		obj.exec(function(err, docs){
+			if (err) {fn(err); return;}
+			fn(null, {
+				count: count,
+				data: docs
+			});
+		});
+	});
+}
+function updatepro(criteria, replace, fn){
+}
+function deletepro(criteria, fn){
+}
 function inserts(array, fn){
 	async.eachSeries(array, insert, function(err){
     if(err) fn(err);
@@ -353,6 +413,7 @@ Model.methods.verify^^=ucfirst(f.name)$$ById = function(id, password, cb) {
 
 Model.methods.get = Model.methods.find = get;
 Model.methods.list = Model.methods.gets = gets;
+Model.methods.selectpro = selectpro;
 Model.methods.insert = Model.methods.add = Model.methods.post  = insert;
 Model.methods.update = Model.methods.modify = Model.methods.put = update;
 Model.methods.updates = Model.methods.puts = updates;
