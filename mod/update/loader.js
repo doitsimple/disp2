@@ -18,6 +18,8 @@ module.exports = function(env, config){
 			env.apis["upload" + ucfirst(name)] = {
 				"text": "上传" + name,
 				"multipart": true,
+				"field": "file",
+				"db": name,
 				"method": "post",
 				"media": "File",
 				"auth": true
