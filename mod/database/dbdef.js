@@ -287,6 +287,7 @@ function extendSchema(schema, key, env){
 		if(f.upload){
 			var nameStr = ucfirst(schema.name) + ucfirst(f.name); 
 			if(!f.media) f.media = "Image";
+			if(env.apis["upload" + nameStr]) return;
 			env.apis["upload" + nameStr] = {
 				"route": schema.name + "/" + f.name,
 				"text": "上传" + f.text,
@@ -297,6 +298,17 @@ function extendSchema(schema, key, env){
 				"field": f.name, 
 				"db": schema.name
 			};
+			console.log("upload" + nameStr);
+			console.log({
+        "route": schema.name + "/" + f.name,
+        "text": "上传" + f.text,
+        "multipart": true,
+        "method": "post",
+        "media": f.media,
+        "auth": true,
+        "field": f.name,
+        "db": schema.name
+      })
 		};
 	});
 }

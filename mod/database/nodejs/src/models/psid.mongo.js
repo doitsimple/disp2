@@ -57,12 +57,10 @@ var AutoIncModel = mongoose.model('^^=name$$_next', AutoIncSchema);
 	^^if(autoIncField){$$
 	if(!model.^^=autoIncField$$){
 		
-		AutoIncModel.findOne({}, function(err, nexti){
-			model.^^=autoIncField$$ = nexti.next;
 			AutoIncModel.findOneAndUpdate({}, {"$inc": {"next":1}}, function(err, nexti){
+			model.^^=autoIncField$$ = nexti.next-1;
         callback(err);
       });
-		})
 	}else{
 		callback();
 	}
@@ -196,8 +194,10 @@ function selectpro(criteria, fn){
 	var obj = Model.find(eq, fields);
 	if(criteria.$match)
 		for(var key in criteria.$match){
-			cobj = cobj.where(key).match(new RegExp(criteria.$match[key]));
-			obj = obj.where(key).match(new RegExp(criteria.$match[key]));
+			if(criteria.$match[key] != ""){
+				cobj = cobj.where(key, new RegExp(criteria.$match[key]));
+				obj = obj.where(key, new RegExp(criteria.$match[key]));
+			}
 		}
 ^^["cmp", "lt", "gt", "gte", "lt", "lte", "ne"].forEach(function(op){$$
 	if(criteria.$^^=op$$)
@@ -206,13 +206,20 @@ function selectpro(criteria, fn){
 			obj = obj.where(key).^^=op$$(criteria.$^^=op$$[key]);
 		}
 ^^})$$
+
 	cobj.count(function(err, count){
 		if (err) {fn(err); return;}
+		if(criteria.$rsort){
+			var sort = libObject.revKey(criteria.$rsort);
+			obj = obj.sort(sort);
+		}
+
 ^^["sort", "skip", "limit"].forEach(function(op){$$
 		if(criteria.$^^=op$$){
 			obj = obj.^^=op$$(criteria.$^^=op$$);
 		}
 ^^})$$
+
 		obj.exec(function(err, docs){
 			if (err) {fn(err); return;}
 			fn(null, {
@@ -290,6 +297,7 @@ function updates(where, doc, fn){
 	};
 	Model.update(where, doc, {multi: true}, fn);
 }
+
 
 
 function upsert(where, doc, fn){

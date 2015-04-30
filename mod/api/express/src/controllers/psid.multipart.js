@@ -12,6 +12,7 @@ exports.^^=name$$ = function(req, fn){
   }
 //	var id = req.files.image.name.match(/(\S+)\.\S+$/)[1];
 	var name = path.basename(req.files.buffer.path);
+
 	Db.models.^^=db$$.method.put(id, {"^^=field$$": name}, function(err){
 		if(err){ fn(err);	return;	}
 		fn(null, {

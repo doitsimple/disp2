@@ -43,7 +43,7 @@ $$
 	 midwareStr = "multipart({uploadDir: path.resolve(uploadPath + '/"+api.route + "/')}), ";
 	 $$
 libFile.mkdirpSync(path.resolve(uploadPath + "/^^=api.route$$"));
-  ^^if(!api.controller){$$
+  ^^if(api.multipart && api.field){$$
 router.route('/^^=api.route$$/:filename')
 			.get(common.download^^=methods.ucfirst(api.name)$$);
   ^^}$$
