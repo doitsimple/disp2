@@ -1,0 +1,19 @@
+{
+  "name": "",
+  "main": "server.js",
+	"scripts": {
+			"start": "node server.js",
+			"test": "NODE_ENV=test sh scripts/test.sh"
+	},
+  "dependencies": {
+		"express": "^4.*",
+		"body-parser": "*",
+		"ursa": "*",
+    "bcrypt": "*",
+		"async": "*"
+  },
+	"devDependencies": {
+		"mocha": "*",
+		"should": "*"
+	}
+}

@@ -1,0 +1,36 @@
+      <!-- Static navbar -->
+      <div class="navbar navbar-default navbar-static-top" role="navigation" ng-controller="navbarController">
+        <div class="container">
+          <div class="navbar-header">
+            <button id="toggle-menu" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/">学银管理后台</a>
+          </div>
+          <div id="menu" class="navbar-collapse collapse">
+            <!-- Left nav -->
+            <ul class="nav navbar-nav">
+							<li>
+                <a ng-click="toggle()">网站地图</a>
+                <ul class="dropdown-menu">
+									^^
+									for (var pagename in global.pages.index.ngRoutes){
+									var page = global.pages.index.ngRoutes[pagename];$$
+                  <li><a ng-click="toggle()" href="#^^=pagename$$/">^^=page.text$$</a></li>
+									^^}$$
+                </ul>
+              </li>
+						</ul>
+            <!-- Right nav -->
+            <ul class="nav navbar-nav navbar-right">
+							<li ng-class="{active: isActive('/signup')}"><a href="#/signup" >注册</a></li>
+							<li ng-hide="isSignedin()" ng-class="{active: isActive('/signin')}"><a href="#/signin" >登录</a></li>
+              <li ng-show="isSignedin()"><a href ng-click="signout()">登出</a></li>
+						</ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div>
+

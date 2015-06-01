@@ -3,41 +3,52 @@ var https = require('https');
 var querystring = require('querystring');
 var url = require("url");
 var libString = require("./string");
-function parseRes(res, fn){
-	var data = "";
-	res.setEncoding('utf8');
-	res.on('data', function (chunk) {
-		data += chunk;
-	});
-	res.on('error', function (e) {
-    fn(e, {statusCode: res.statusCode});
-	});			
-	res.on('end',function(){
-		var doc = {};
-		doc.statusCode = res.statusCode;
-		try {
-			doc.data = JSON.parse(data);
-		}catch(e){
-			doc.data = data;
-		}
-    fn(null, doc, res.headers);
-	});
-}
-
 function _post(protocol, options, content, fn){
 	var req;
 	if(protocol == "http:"){
-
+		var data = "";
 		req = http.request(options,function(res){
-			parseRes(res, fn);
+			res.setEncoding('utf8');
+			res.on('data', function (chunk) {
+				data += chunk;
+			});
+			res.on('error', function (e) {
+        fn(e, {statusCode: res.statusCode});
+			});			
+			res.on('end',function(){
+				var doc = {};
+				doc.statusCode = res.statusCode;
+				try {
+					doc.data = JSON.parse(data);
+				}catch(e){
+					doc.data = data;
+				}
+        fn(null, doc, res.headers);
+			});
 		});
 	}else if(protocol == "https:"){
 		req = https.request(options,function(res){
-			parseRes(res, fn);
+			res.setEncoding('utf8');
+			res.on('data', function (chunk) {
+				data += chunk;
+			});
+			res.on('error', function (e) {
+        fn(e, {statusCode: res.statusCode});
+			});			
+			res.on('end',function(){
+				var doc = {};
+				doc.statusCode = res.statusCode;
+				try {
+					doc.data = JSON.parse(data);
+				}catch(e){
+					doc.data = data;
+				}
+        fn(null, doc, res.headers);
+			});
 		});
 	}else{
-		fn("wrong protocol: " + protocol);
-		return;
+		console.error("wrong protocol "+ urlParsed.protocol);
+		process.exit(1);
 	}
 	req.write(content);
 	req.end();
@@ -45,67 +56,52 @@ function _post(protocol, options, content, fn){
 function _get(protocol, options, fn){
 	var req;
 	if(protocol == "http:"){
+		var data = "";
 		req = http.request(options,function(res){
-			parseRes(res, fn);
+			res.setEncoding('utf8');
+			res.on('data', function (chunk) {
+				data += chunk;
+			});
+			res.on('error', function (e) {
+        fn(e, {statusCode: res.statusCode});
+			});			
+			res.on('end',function(){
+				var doc = {};
+				doc.statusCode = res.statusCode;
+				try {
+					doc.data = JSON.parse(data);
+				}catch(e){
+					doc.data = data;
+				}
+        fn(null, doc);
+			});
 		});
 	}else if(protocol == "https:"){
 		req = https.request(options,function(res){
-			parseRes(res, fn);
+			res.setEncoding('utf8');
+			res.on('data', function (chunk) {
+				data += chunk;
+			});
+			res.on('error', function (e) {
+        fn(e, {statusCode: res.statusCode});
+			});			
+			res.on('end',function(){
+				var doc = {};
+				doc.statusCode = res.statusCode;
+				try {
+					doc.data = JSON.parse(data);
+				}catch(e){
+					doc.data = data;
+				}
+        fn(null, doc);
+			});
 		});
 	}else{
-		fn("wrong protocol: " + protocol);
-		return;
+		console.error("wrong protocol "+ urlParsed.protocol);
+		process.exit(1);
 	}
 	req.end();
 }
-function _getraw(protocol, options, fn){
-	var req;
-	if(protocol == "http:"){
-		req = http.request(options,function(res){
-			fn(null, res);
-		});
-	}else if(protocol == "https:"){
-		req = https.request(options,function(res){
-			fn(null, res);
-		});
-	}else{
-		fn("wrong protocol: " + protocol);
-		return;
-	}
-	req.end();
-}
-
-function _postraw(protocol, options, content, fn){
-	var req;
-	if(protocol == "http:"){
-		req = http.request(options,function(res){
-			fn(null, res);
-		});
-	}else if(protocol == "https:"){
-		req = https.request(options,function(res){
-			fn(null, res);
-		});
-	}else{
-		fn("wrong protocol: " + protocol);
-		return;
-	}
-	req.write(content);
-	req.end();
-}
-
-function getraw(urlStr, fn){
-	var urlParsed = url.parse(urlStr);	
-	var options = {
-    host: urlParsed.hostname,
-    path: urlParsed.path,
-    method: 'GET',
-    agent: false,
-    rejectUnauthorized : false
-	};
-	if(urlParsed.port) options.port = urlParsed.port;
-	_getraw(urlParsed.protocol, options, fn);
-}
-
 function get(urlStr, fn){
 	var urlParsed = url.parse(urlStr);	
 	var options = {
@@ -129,24 +125,6 @@ function _delete_(urlStr, fn){
 	};
 	if(urlParsed.port) options.port = urlParsed.port;
 	_get(urlParsed.protocol, options, fn);
-}
-function postrawForm(urlStr, json, fn){
-	var urlParsed = url.parse(urlStr);	
-	var content = querystring.stringify(json);
-//	console.log(content);
-	var options = {
-    host: urlParsed.hostname,
-    path: urlParsed.path,
-    method: 'POST',
-    agent: false,
-    rejectUnauthorized : false,
-    headers: {
-      'Content-Type' : 'application/x-www-form-urlencoded', 
-      'Content-Length' : libString.strlen(content)
-    }
-	};
-	if(urlParsed.port) options.port = urlParsed.port;
-	_postraw(urlParsed.protocol, options, content, fn);
 }
 
 function postForm(urlStr, json, fn){
@@ -206,8 +184,6 @@ module.exports = {
 	postJSON: postJSON,
 	putJSON: putJSON,
 	get: get,
-	getraw: getraw,
-	postrawForm: postrawForm,
 	delete: _delete_
 }
 

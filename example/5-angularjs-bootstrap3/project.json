@@ -1,0 +1,24 @@
+{
+    "ns": [
+        "angular",
+        "bootstrap3"
+    ],
+    "mod": {
+        "page": true
+    },
+    "env": {
+        "pages": {
+            "index": {								
+                "title": "example",
+								"ngRoutes": {
+										"home": {
+												"isHome": true
+										},
+										"checkUser": {
+												"text": "审核用户"
+										}
+								}
+            }
+        }
+    }
+}

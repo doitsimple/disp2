@@ -1,0 +1,9 @@
+{
+		"env":{
+				"hobbies": {
+						"Yu": "cooking",
+						"Hu": "coding",
+						"Liu": "sleeping"
+				}
+		}
+}
